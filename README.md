@@ -1,7 +1,7 @@
 # Welcome to the VibeCheck Web Application
 
 <p align="center">
-  <img src="https://github.com/harrislab-brown/VibeCheck_Web/blob/main/src/public/VibeCheck_Web_example.png" width="600">
+  <img src="https://github.com/harrislab-brown/VibeCheck_Web/blob/main/src/public/VibeCheck_Web_example.png" width=80>
 </p>
 
 
