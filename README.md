@@ -1,5 +1,10 @@
 # Welcome to the VibeCheck Web Application
 
+<p align="center">
+  <img src="https://github.com/harrislab-brown/VibeCheck_Web/blob/main/src/public/VibeCheck_Web_example.png" width="600">
+</p>
+
+
 This application is meant to serve most usecases that students are likely to have when using the VibeCheck sensor system for vibration measurement and data visualization. It is built using modern web front end frameworks.
 
 ## Browser Compatability
