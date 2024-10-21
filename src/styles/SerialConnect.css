@@ -1,0 +1,35 @@
+/* src/components/SerialConnect.css */
+.serial-connect-button {
+    display: flex;
+    padding: 10px 20px;
+    font-size: 16px;
+
+    cursor: pointer;
+    text-align: center;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.serial-connect-button.incompatible {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+}
+
+.serial-connect-button.disconnected {
+    background-color: #3498db;
+    color: white;
+}
+
+.serial-connect-button.disconnected:hover {
+    background-color: #2980b9;
+}
+
+.serial-connect-button.connected {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.serial-connect-button.connected:hover {
+    background-color: #c0392b;
+}
