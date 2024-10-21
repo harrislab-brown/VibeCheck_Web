@@ -20,7 +20,7 @@ const InfoComponent: React.FC = () => {
             <br/>
             <h3>VibeCheck hardware: <a href="https://github.com/harrislab-brown/VibeCheck">VibeCheck GitHub</a></h3>
             <br/>
-            <h3>Vibecheck_Web: <a href="https://github.com/eli-silver/vibecheck_web">VibeCheck_Web GitHub</a> </h3>
+            <h3>Vibecheck_Web: <a href="https://github.com/harrislab-brown/VibeCheck_Web">VibeCheck_Web GitHub</a> </h3>
             
         </div>
     );
