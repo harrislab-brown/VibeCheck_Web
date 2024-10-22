@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { RootState } from '../redux/store';
 import { useAppSelector, useAppDispatch } from '../redux/hooks'
 import { connectSerial, disconnectSerial } from '../features/serialSlice';
+import { Button, Card, CardHeader, Divider } from '@nextui-org/react';
 import '../styles/SerialConnect.css';
 
 const SerialConnect: React.FC = () => {
@@ -30,14 +31,22 @@ const SerialConnect: React.FC = () => {
     };
 
     return (
+        <Card className='serial-connect-button'>
+            <CardHeader className='pb-0 pt-0 text-sm '>
+                Serial Connection
+            </CardHeader>
+            <Divider/>
+
         <div className = "serial-connect-button">
-            <div 
+            <Button
                 className={getButtonClass()}
                 onClick={isBrowserCompatible ? toggleSerialConnection : undefined}
+                fullWidth={true}
             >
                 {getButtonText()}
-            </div>
+            </Button>
         </div>
+        </Card>
     );
 };
 

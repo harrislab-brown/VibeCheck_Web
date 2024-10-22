@@ -9,8 +9,8 @@ export interface StrobeState {
 
 const initialState: StrobeState = {
     isEnabled: false,
-    frequency: 1,  // Default frequency of 1 Hz
-    exposure: 50,  // Default exposure of 50%
+    frequency: 61,  // Default frequency of 1 Hz
+    exposure: 5,  // Default exposure of 50%
     phase: 0,      // Default phase of 0 degrees
 }
 

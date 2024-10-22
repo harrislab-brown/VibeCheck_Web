@@ -1,0 +1,18 @@
+.status {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+.status > * {
+  width: 100%;
+  height: 100%;
+  padding: 5px;
+  box-sizing: border-box;
+  display: 'flex'
+}
+.systemStatusCardContainer {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+}

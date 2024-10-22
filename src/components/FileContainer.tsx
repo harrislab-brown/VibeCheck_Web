@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button } from "@nextui-org/react";
+import { Button, Card, CardHeader, Divider } from "@nextui-org/react";
 import { FileStreamService } from '../services/FileStreamService';
 import { RootState } from '../redux/store';
 import { setSaveLocation, setRecording } from '../features/fileSlice';
@@ -43,6 +43,7 @@ const FileContainer: React.FC = () => {
         second: '2-digit',
         hour12: false
       });
+
       const [date, time] = now.split(', ');
       const [month, day, year] = date.split('/');
       const timestamp = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}_${time.replace(/:/g, '-')}`;
@@ -54,17 +55,28 @@ const FileContainer: React.FC = () => {
   };
 
   return (
-    <div className="file-container">
-      <Button onClick={handleSelectLocation}>
-        {saveLocation ? `Save Location: ${saveLocation}` : 'Select Save Location'}
-      </Button>
-      <Button
-        onClick={handleToggleRecording}
-        disabled={!saveLocation}
-        color={isRecording ? "danger" : "primary"}
+    <div className="file-container w-full">
+      <Card
+      fullWidth={true}
+      className='pl-5 pr-5'
       >
-        {isRecording ? 'Stop Recording' : 'Start Recording'}
-      </Button>
+        <CardHeader>
+          File Management
+        </CardHeader>
+        <Divider/>
+        <div className='p-5 flex w-full h-full'>
+          <Button onClick={handleSelectLocation}>
+            {saveLocation ? `Save Location: ${saveLocation}` : 'Select Save Location'}
+          </Button>
+          <Button
+            onClick={handleToggleRecording}
+            disabled={!saveLocation}
+            color={isRecording ? "danger" : "primary"}
+            >
+            {isRecording ? 'Stop Recording' : 'Start Recording'}
+          </Button>
+        </div>
+      </Card>
     </div>
   );
 };

@@ -33,7 +33,7 @@ const StrobeComponent: React.FC = () => {
     };
 
     return (
-        <div className="p-4 bg-gray-800 text-gray-300">
+        <div className="p-4 bg-">
             <h2 className="text-xl font-bold mb-4">Strobe Controls</h2>
             <div className="mb-4 flex items-center">
                 <Switch 

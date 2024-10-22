@@ -47,10 +47,10 @@ const SensorSettings: React.FC<SensorSettingsProps> = ({ accelNumber }) => {
     { label: "104 Hz", value: "104" },
     { label: "208 Hz", value: "208" },
     { label: "416 Hz", value: "416" },
-    { label: "833 Hz", value: "833" },
-    { label: "1660 Hz", value: "1660" },
-    { label: "3330 Hz", value: "3330" },
-    { label: "6660 Hz", value: "6660" },
+    //{ label: "833 Hz", value: "833" },
+    //{ label: "1660 Hz", value: "1660" },
+    //{ label: "3330 Hz", value: "3330" },
+    //{ label: "6660 Hz", value: "6660" },
   ];
 
   if (!sensorState) {
@@ -71,15 +71,10 @@ const SensorSettings: React.FC<SensorSettingsProps> = ({ accelNumber }) => {
     dispatch(setSampleRate({ accelNumber, rate: value }));
   };
 
-  const selectClasses = {
-    trigger: "bg-gray-700 text-gray-300",
-    value: "text-gray-300",
-    popover: "bg-gray-700",
-    listbox: "bg-gray-700",
-  };
+
 
   return (
-    <div className="p-4 bg-gray-800 text-gray-300">
+    <div>
       <h3 className="text-lg font-semibold mb-2">Sensor {accelNumber} (Accel {accelNumber + 1})</h3>
       <div className="mb-4 flex items-center">
         <Switch 
@@ -99,7 +94,6 @@ const SensorSettings: React.FC<SensorSettingsProps> = ({ accelNumber }) => {
           selectedKeys={accelerationRange ? [accelerationRange] : []}
           onSelectionChange={(keys) => handleAccelerationRangeChange(Array.from(keys)[0] as string)}
           //isDisabled={!isEnabled}
-          classNames={selectClasses}
         >
           {accelRanges.map((range) => (
             <SelectItem key={range.value} value={range.value}>
@@ -116,7 +110,6 @@ const SensorSettings: React.FC<SensorSettingsProps> = ({ accelNumber }) => {
           selectedKeys={sampleRate ? [sampleRate] : []}
           onSelectionChange={(keys) => handleSampleRateChange(Array.from(keys)[0] as string)}
           //isDisabled={!isEnabled}
-          classNames={selectClasses}
         >
           {sampleRates.map((rate) => (
             <SelectItem key={rate.value} value={rate.value}>

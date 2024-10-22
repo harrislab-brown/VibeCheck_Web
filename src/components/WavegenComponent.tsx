@@ -25,7 +25,7 @@ const Wavegen: React.FC = () => {
     const handleAmplitudeSubmit = () => {
         const value = parseFloat(amplitudeInput);
         if (!isNaN(value) && value >= 0 && value <= 100) {
-            setAmplitude(value/100);
+            setAmplitude(value/100 * 0.6); // map value from 0-100 user input to 0-0.6 Max output is 60% of full range
         } else {
             alert('Please enter a number between 0 and 100 for amplitude.');
         }
@@ -42,7 +42,7 @@ const Wavegen: React.FC = () => {
 
 
     return (
-        <div className="p-4 bg-gray-800 text-gray-300">
+        <div className="p-4 ">
             <h2 className="text-xl font-bold mb-4">Waveform Generator Controls</h2>
             <div className="mb-4 flex items-center">
                 <Switch 

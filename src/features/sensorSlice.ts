@@ -14,9 +14,9 @@ export interface SensorStateMap {
 }
 
 const initialState: SensorStateMap = {
-  0: { isEnabled: false, accelerationRange: '', sampleRate: '', channel_num: 0 },
-  1: { isEnabled: false, accelerationRange: '', sampleRate: '', channel_num: 2 },
-  2: { isEnabled: false, accelerationRange: '', sampleRate: '', channel_num: 4 },
+  0: { isEnabled: false, accelerationRange: '4', sampleRate: '52', channel_num: 0 },
+  1: { isEnabled: false, accelerationRange: '4', sampleRate: '52', channel_num: 2 },
+  2: { isEnabled: false, accelerationRange: '4', sampleRate: '52', channel_num: 4 },
 };
 
 export const sensorSlice = createSlice({

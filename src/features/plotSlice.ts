@@ -9,6 +9,7 @@ interface PlotSettings {
   triggerAxis: 'x' | 'y' | 'z';
   triggerLevel: number;
   useTrigger: boolean;
+  isPaused: boolean;
 }
 
 const initialState: PlotSettings = {
@@ -20,6 +21,7 @@ const initialState: PlotSettings = {
   triggerAxis: 'z',
   triggerLevel: 1.5,
   useTrigger: false,
+  isPaused: false,
 };
 
 const plotSlice = createSlice({
@@ -29,8 +31,11 @@ const plotSlice = createSlice({
     updatePlotSettings: (state, action: PayloadAction<Partial<PlotSettings>>) => {
       return { ...state, ...action.payload };
     },
+    togglePause: (state) => {
+      state.isPaused = !state.isPaused;
+    }
   },
 });
 
-export const { updatePlotSettings } = plotSlice.actions;
+export const { updatePlotSettings, togglePause } = plotSlice.actions;
 export default plotSlice.reducer;

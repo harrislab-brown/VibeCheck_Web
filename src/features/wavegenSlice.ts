@@ -11,7 +11,7 @@ export interface WavegenState {
 
 const initialState: WavegenState = {
     isEnabled: false,
-    amplitude: 0.5,
+    amplitude: 0.10,
     frequency: 60,
     waveform: 'sine',
 }

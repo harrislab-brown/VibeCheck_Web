@@ -8,14 +8,13 @@ import {
   PointElement,
   LineElement,
   Title,
-  Tooltip,
+  // Tooltip,
   Legend,
   ChartOptions,
   ChartData
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { useAppSelector } from '../redux/hooks';
-// import { useSelector } from 'react-redux';
 
 import '../styles/Chart.css'
 import { RootState } from '../redux/store';
@@ -26,7 +25,7 @@ ChartJS.register(
   PointElement,
   LineElement,
   Title,
-  Tooltip,
+  // Tooltip,
   Legend
 );
 
@@ -47,7 +46,7 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
     labels: [],
     datasets: []
   });
-
+  const isPaused = useAppSelector(state => state.plot.isPaused);
   const allData = useAppSelector((state: RootState) => state.data.data);
   const plotSettings = useAppSelector(state => state.plot);
   const enabledSensorsCount = useAppSelector(state=> Object.values(state.sensor).filter(s=>s.isEnabled).length);
@@ -57,6 +56,8 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
 
   useEffect(() => {
     const updateChart = () => {
+      if(isPaused) return;
+
       const data = allData.find((d) => d.channel === channel);
       if (data) {
         const newChartData: ChartData<'line'> = {
@@ -72,15 +73,15 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
             {
               label: 'Y Axis',
               data: data.dataPoints.slice(-plotSettings.windowWidth).map((point) => point.y),
-              borderColor: 'rgb(53, 162, 235)',
-              backgroundColor: 'rgba(53, 162, 235, 0.5)',
+              borderColor: 'rgb(75, 192, 192)',
+              backgroundColor: 'rgba(75, 192, 192, 0.5)',
               tension: lineTension,
             },
             {
               label: 'Z Axis',
               data: data.dataPoints.slice(-plotSettings.windowWidth).map((point) => point.z),
-              borderColor: 'rgb(75, 192, 192)',
-              backgroundColor: 'rgba(75, 192, 192, 0.5)',
+              borderColor: 'rgb(53, 162, 235)',
+              backgroundColor: 'rgba(53, 162, 235, 0.5)',
               tension: lineTension,
             },
           ],
