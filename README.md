@@ -2,6 +2,10 @@
 
 This application is meant to serve most usecases that students are likely to have when using the VibeCheck sensor system for vibration measurement and data visualization. It is built using modern web front end frameworks.
 
+<p align="center">
+  <img src="./src/public/VibeCheck_Web_example.png" >
+</p>
+
 ## Browser Compatability
 The VibeCheck_Web relies on the WebSerial API for communication with hardware devices. It's important to note that the WebSerial API is not supported by all browsers. Here's a detailed compatibility breakdown:
 
