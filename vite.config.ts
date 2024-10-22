@@ -8,7 +8,7 @@ export default defineConfig({
   optimizeDeps: {
     include: ['@nextui-org/react','clsx', 'tailwind-merge'],
   },
-  base: '/vibecheck_web/',
+  base: '/VibeCheck_Web/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
