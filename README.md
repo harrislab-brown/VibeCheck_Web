@@ -116,7 +116,7 @@ First, clone the VibeCheck repository to your local machine:
 
 ```bash
 git clone https://github.com/harrislab-brown/VibeCheck.git
-cd vibecheck/web_UI/vibecheck_redux
+cd VibeCheck_Web
 ```
 
 ### Step 2: Install Dependencies
