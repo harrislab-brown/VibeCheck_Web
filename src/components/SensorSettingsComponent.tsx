@@ -47,10 +47,10 @@ const SensorSettings: React.FC<SensorSettingsProps> = ({ accelNumber }) => {
     { label: "104 Hz", value: "104" },
     { label: "208 Hz", value: "208" },
     { label: "416 Hz", value: "416" },
-    //{ label: "833 Hz", value: "833" },
-    //{ label: "1660 Hz", value: "1660" },
-    //{ label: "3330 Hz", value: "3330" },
-    //{ label: "6660 Hz", value: "6660" },
+    { label: "833 Hz", value: "833" },
+    { label: "1660 Hz", value: "1660" },
+    { label: "3330 Hz", value: "3330" },
+    { label: "6660 Hz", value: "6660" },
   ];
 
   if (!sensorState) {

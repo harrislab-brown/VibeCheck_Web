@@ -11,7 +11,10 @@ const SerialConnect: React.FC = () => {
     const { isConnected, isBrowserCompatible } = useAppSelector((state: RootState) => state.serial);
     const [baudRate] = useState(115200);
 
-    const toggleSerialConnection = async () => {
+
+
+    
+    const toggleSerialConnection = async () => {// make this function work withou redux and we are golden
         if (isConnected) {
             await dispatch(disconnectSerial());
         } else {
@@ -32,10 +35,10 @@ const SerialConnect: React.FC = () => {
 
     return (
         <Card className='serial-connect-button'>
-            <CardHeader className='pb-0 pt-0 text-sm '>
+            {/* <CardHeader className='pb-0 pt-0 text-sm '>
                 Serial Connection
             </CardHeader>
-            <Divider/>
+            <Divider/> */}
 
         <div className = "serial-connect-button">
             <Button

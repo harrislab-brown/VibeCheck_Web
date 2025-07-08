@@ -12,9 +12,9 @@ const InfoComponent: React.FC = () => {
                 <li>  - Connect your VibeCheck to our computer with a USB-C cable</li>
                 <li>  - Use the <b>Connect</b> button to open a serial port</li>
                 <li>  - Attach a sensor board to your VibeCheck with a JST cable</li>
-                <li>  - Enable a sensor from the <b>Sensor #</b> settings dropdown</li>
+                <li>  - Enable a sensor from the <b>Sensors</b> dropdown</li>
                 <li>  - Set the desired measurement range and sample rate</li>
-                <li>  - Select a folder to save data using the <b>Select Save Location</b> button</li>
+                <li>  - Select a folder to save data using the <b>Select Save Location</b> button in the File Management dropdown</li>
                 <li>  - Begin saving data using the <b>Start Recording</b> button</li>
             </ul>
             <br/>

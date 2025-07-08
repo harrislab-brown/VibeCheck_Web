@@ -7,10 +7,56 @@
   height: 100vh;
   width: 100vw;
   overflow-x: hidden;
+  overflow-y: hidden;
+
   justify-content:flex-start;
   /* align-items: stretch; */
   padding:5px;
 }
+
+
+.settingsContainer{
+  display:flex;
+  flex-direction: row;
+  width: 30%;
+  order: 1;
+  position: fixed;
+  right:0;
+
+}
+
+
+
+.bigContainter{
+  width:100vw;
+  height: 88%;
+  order:0;
+  display:flex;
+  position:fixed;
+  bottom: 0;
+  right: -5vw;
+  
+
+}
+
+.smallContainter{
+  width:60vw;
+  height: 100%;
+  order:0;
+  display:flex;
+  position:fixed;
+  right:35vw;
+
+
+}
+
+.OnOffSwitch{
+  position: absolute;
+  right: 0;
+  top:0;
+  order:3
+}
+
 
 .logo-serial-plot-controls {
   width: 100%;

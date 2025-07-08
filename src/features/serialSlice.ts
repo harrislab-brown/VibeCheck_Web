@@ -1,5 +1,7 @@
 // src/features/serial/serialSlice.ts
 
+//if I understand correctly I basically need to make a version of this file outside of the redux store but still get the data to serialDataMiddleware
+
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { ChannelData } from '../utils/dataParser';
 import { SerialService } from '../services/SerialService';
@@ -42,7 +44,9 @@ export const connectSerial = createAsyncThunk(
       }
 
     try {
-      await serialService.connect(baudRate);
+      await serialService.connect(baudRate);// here is where the redux store gets the data. 
+      // it tries to connect in which case the data is sent to the store
+      //  and then read by serial data middleware
       dispatch(setStatusMessage(`Serial port connected at ${baudRate} baud`));
 
       return true;

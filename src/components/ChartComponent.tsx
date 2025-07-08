@@ -48,6 +48,7 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
   });
   const isPaused = useAppSelector(state => state.plot.isPaused);
   const allData = useAppSelector((state: RootState) => state.data.data);
+  // this line needs to get the data from elsewhere when data is removed from redux store
   const plotSettings = useAppSelector(state => state.plot);
   const enabledSensorsCount = useAppSelector(state=> Object.values(state.sensor).filter(s=>s.isEnabled).length);
   const chartRef = useRef<ChartJS<"line"> | null>(null);
@@ -58,7 +59,7 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
     const updateChart = () => {
       if(isPaused) return;
 
-      const data = allData.find((d) => d.channel === channel);
+      const data = allData.find((d) => d.channel === channel);//this line will also probably change
       if (data) {
         const newChartData: ChartData<'line'> = {
           labels: data.dataPoints.slice(-plotSettings.windowWidth).map((_, index) => index.toString()),
@@ -127,9 +128,14 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
       };
     }
   }, [chartRef]);
+
+  // const data = allData.find((d) => d.channel === channel);
+  // console.log(data.dataPoints.slice(-plotSettings.windowWidth).map((point) => point.x))
+
   return (
     <div className="chart-div" style={{ height: `${100 / enabledSensorsCount}%` }}>
-      <Line ref={chartRef} data={chartData} options={options} />
+      { <Line ref={chartRef} data={chartData} options={options} /> }
+      {/* console.log(chartData) */}
     </div>
   );
 };

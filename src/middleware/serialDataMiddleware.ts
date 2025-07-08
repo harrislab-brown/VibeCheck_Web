@@ -15,20 +15,27 @@ function isSerialDataReceivedAction(action: any): action is SerialDataReceivedAc
 }
 
 const createSerialDataMiddleware = (fileStreamService: FileStreamService): Middleware<{}, RootState> => {
-  const middleware: Middleware<{}, RootState> = (store) => (next) => (action) => {
-    if (isSerialDataReceivedAction(action)) {
-      const serialData: string = action.payload;
-      const parsedMessage: Message = parseSerialData(serialData);
+  const middleware: Middleware<{}, RootState> = (store) => (next) => (action) => { //right here the data is taken from the RootState which is what the redux store provides
+    if (isSerialDataReceivedAction(action)) {// make sure the action we are recieving is actually a data packet
+      // the .payload here is the data attached to a change in state of the system to "allow necessary change"
+      const serialData: string = action.payload; // change what is after the = here and we should be good. 
+      const parsedMessage: Message = parseSerialData(serialData); //here is where the raw data is started 
+      // to be processed, from here on it should already be clear of the redux store.... except we continue to
+      //  give things to the redux store to be usen by other programs
 
       switch (parsedMessage.type) {
         case 'data':
           if (Array.isArray(parsedMessage.data)) {
             const channelData = parsedMessage.data as ChannelData[];
-            store.dispatch(receiveData(channelData));
+            store.dispatch(receiveData(channelData)); // here data is given to the redux store (*BAD*) 
+            // BTW, the data for the graphs is what is dispatched here, so we will still want to send this 
+            // out but not through the redux store
             
-            if (fileStreamService.getIsRecording()) {
+            if (fileStreamService.getIsRecording()) { //File containter changes isRecording 
+            // which is returned by getIsRecording to true so that this triggers 
+            // when the record button is pressed
               const csvData = convertToCSV(channelData);
-              fileStreamService.writeToFile(csvData).catch(error => {
+              fileStreamService.writeToFile(csvData).catch(error => {// writes to the csv file
                 console.error('Error writing to file:', error);
                 store.dispatch(setStatusMessage(`Error writing to file: ${error.message}`));
               });

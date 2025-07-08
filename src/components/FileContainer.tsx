@@ -5,9 +5,12 @@ import { FileStreamService } from '../services/FileStreamService';
 import { RootState } from '../redux/store';
 import { setSaveLocation, setRecording } from '../features/fileSlice';
 import { setStatusMessage } from '../features/systemStatusSlice';
+import {Switch} from  "@nextui-org/react";
+
 
 const FileContainer: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(); //this is redux stuff (including the next two lines) 
+  // that we want to leave as is
   const saveLocation = useSelector((state: RootState) => state.file.saveLocation);
   const isRecording = useSelector((state: RootState) => state.file.isRecording);
   const fileStreamService = FileStreamService.getInstance();
@@ -49,24 +52,25 @@ const FileContainer: React.FC = () => {
       const timestamp = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}_${time.replace(/:/g, '-')}`;
       dispatch(setStatusMessage(`Recording Started at ${timestamp}`));
       const filename = `data_${timestamp}.csv`;
-      await fileStreamService.startRecording(filename);
-      dispatch(setRecording(true));
+      await fileStreamService.startRecording(filename); 
+      // follow this to get the data out of redux store
+      //Conclusion: this changes isRecording to true inside of a filestreamservice instance
+      // which triggers serial data middleware to start writing
+      dispatch(setRecording(true)); // here is where the data is accesed, 
     }
   };
 
   return (
-    <div className="file-container w-full">
+    <div className="file-container w-full" style ={{  position: 'relative', bottom:0, right:0}}>
       <Card
       fullWidth={true}
       className='pl-5 pr-5'
       >
-        <CardHeader>
-          File Management
-        </CardHeader>
-        <Divider/>
+        
         <div className='p-5 flex w-full h-full'>
           <Button onClick={handleSelectLocation}>
-            {saveLocation ? `Save Location: ${saveLocation}` : 'Select Save Location'}
+            Select Save Location
+            {/* {saveLocation ? `Save Location: ${saveLocation}` : 'Select Save Location'} */}
           </Button>
           <Button
             onClick={handleToggleRecording}
@@ -75,7 +79,10 @@ const FileContainer: React.FC = () => {
             >
             {isRecording ? 'Stop Recording' : 'Start Recording'}
           </Button>
+
         </div>
+        { saveLocation && <p> Save Location: {saveLocation} </p>}
+
       </Card>
     </div>
   );

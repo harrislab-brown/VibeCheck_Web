@@ -19,14 +19,14 @@ export class FileStreamService {
       this.outputDirectory = directory;
     }
   
-    async startRecording(filename: string) {
+    async startRecording(filename: string) { //this is where filecontainer accesses the data
       if (!this.outputDirectory) {
         throw new Error('Output directory not set');
       }
   
       this.fileHandle = await this.outputDirectory.getFileHandle(filename, { create: true });
       this.writer = await this.fileHandle.createWritable();
-      this.isRecording = true;
+      this.isRecording = true; //this triggers something that is started when connect is pressed
       this.writeToFile('Channel,Timestamp,X,Y,Z\n'); // set first line of file as descriptive header
       this.isClosing = false; 
     }

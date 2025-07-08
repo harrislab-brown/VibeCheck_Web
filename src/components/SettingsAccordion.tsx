@@ -4,31 +4,35 @@ import SensorSettings from './SensorSettingsComponent';
 import SerialInput from './SerialInput';
 import Wavegen from './WavegenComponent';
 import StrobeComponent from './StrobeComponent';
+import SystemStatus from './SystemStatus';
+import PlotControlsComponent from './PlotControlsComponent';
+import SerialConnect from './SerialConnect';
+import FileContainer from './FileContainer';
+import Sensors from "./SensorsComponent"
 
 const SettingsAccordion: React.FC = () => {
   return (
-    <div className="max-h-full overflow-auto w-full p-4 padding-20">
+    <div >
       <Card
       className='p-5'>
-        <CardHeader>
-          <h2>Hardware Settings</h2>
-        </CardHeader>
-        <Divider/>
+        
       <Accordion 
-        selectionMode="multiple"
+        selectionMode="multiple" defaultExpandedKeys={["connect"]}
         >
-        <AccordionItem key="sensor0" aria-label="Sensor 0" 
-        title={"Sensor 0"} 
-        >
-          <SensorSettings accelNumber={0} />
+           <AccordionItem key="connect" aria-label="Connect" title={"Serial Connection"}>
+          <SerialConnect/>
         </AccordionItem>
-        <AccordionItem key="sensor1" aria-label="Sensor 1" 
-          title={"Sensor 1"}>
-          <SensorSettings accelNumber={1} />
+        <AccordionItem key="save" aria-label="Save" title={"File management"}>
+          <FileContainer />
         </AccordionItem>
-        <AccordionItem key="sensor2" aria-label="Sensor 2" 
-          title={"Sensor 2"}>
-          <SensorSettings accelNumber={2} />
+        <AccordionItem key="plot" aria-label="Plot" title={"Plot Settings"}>
+          <PlotControlsComponent />
+        </AccordionItem>
+         <AccordionItem key="status" aria-label="Status" title={"System Status"}>
+          <SystemStatus />
+        </AccordionItem>
+         <AccordionItem key="sensors" aria-label="Sensors" title={"Sensors "}>
+          <Sensors />
         </AccordionItem>
         <AccordionItem key="wavegen" aria-label="Wavegen" title={"Wavegen"}>
           <Wavegen/>
@@ -41,10 +45,21 @@ const SettingsAccordion: React.FC = () => {
         <AccordionItem key="serial" aria-label="Serial" title={"Serial Input"}>
           <SerialInput />
         </AccordionItem>
+        <AccordionItem key="calibration" aria-label="Calibration" title={"Calibration Controls"}>
+        </AccordionItem>
+          <AccordionItem key="filter" aria-label="Filter" title={"Digital Filter"}>
+        </AccordionItem>  
+          <AccordionItem key="decimation" aria-label="Decimation" title={"Decimation Controls"}>
+        </AccordionItem>  
+          <AccordionItem key="triggering" aria-label="Triggering" title={"Triggering Controls"}>
+        </AccordionItem>
+       
+       
+        
+
       </Accordion>
       </Card>
     </div>
   );
 };
-
 export default SettingsAccordion;

@@ -9,7 +9,7 @@ type SerialDataReceivedAction = {
     payload: string;
   };
 
-export class SerialService {
+export class SerialService { //this class interacts directly with vibecheck through the serial port
     private port: SerialPort | null = null;
     private reader: ReadableStreamDefaultReader<Uint8Array> | null = null;
     private isReading: boolean = false;
@@ -28,14 +28,14 @@ export class SerialService {
             if (typeof action === 'function') {
                 this.dispatch(action);
             } else {
-                this.dispatch(action);
+                this.dispatch(action); // ?? this is the same text but one is blue?
             }
         } else {
             console.error('Dispatch function not set in SerialService');
         }
     }
 
-    async connect(baudRate: number): Promise<void> {
+    async connect(baudRate: number): Promise<void> { //this function reads data from the connection
         try {
             const selectedPort = await navigator.serial.requestPort();
             await selectedPort.open({ baudRate });
@@ -43,6 +43,7 @@ export class SerialService {
             this.dispatchAction(setConnected());
             console.log('Connected to serial port');
             this.readData(); // Start reading data after successful connection
+            //need to learn how to use this function so that I can use it outside of the store
             this.sendData('Connect');
 
         } catch (error) {
@@ -81,7 +82,7 @@ export class SerialService {
         }
     }
 
-    private async readData(): Promise<void> {
+    private async readData(): Promise<void> { //where the data originally gets to the program!
         if (!this.port) {
           throw new Error('Not connected to a serial port');
         }
@@ -97,7 +98,8 @@ export class SerialService {
                 break;
               }
               const decodedValue = new TextDecoder().decode(value);
-              this.processIncomingData(decodedValue);
+              this.processIncomingData(decodedValue); // here is where the data 
+              // is sent to the store as a dispatch
             }
           } catch (error) {
             console.error('Error reading data:', error);
@@ -116,7 +118,9 @@ export class SerialService {
         while ((newlineIndex = this.dataBuffer.indexOf('\n')) !== -1) {
           const completeMessage = this.dataBuffer.slice(0, newlineIndex);
           this.dataBuffer = this.dataBuffer.slice(newlineIndex + 1);
-          this.dispatchCompleteMessage(completeMessage);
+          this.dispatchCompleteMessage(completeMessage); // completeMessage is what I want to send to serialDataMiddleware
+          //dispatch Complete Message is how the data gets to the store then serial data middleware
+          // need to get the data to serial data middleware somehow else
         }
       }
     

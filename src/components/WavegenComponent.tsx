@@ -62,7 +62,6 @@ const Wavegen: React.FC = () => {
                     <Tab key='sine' title='Sine' />
                     <Tab key='square' title='Square' />
                     <Tab key='triangle' title='Triangle' />
-                    <Tab key='sawtooth' title='Sawtooth' />
                 </Tabs>
             </div>
 

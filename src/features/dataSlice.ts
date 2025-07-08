@@ -1,5 +1,9 @@
 // src/features/dataSlice.ts
 
+
+//this is where already somewhat processed data is taken from serial data middleware and given to the graph
+
+
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { ChannelData } from '../utils/dataParser'
 import { AppThunk } from '../redux/store';
@@ -32,6 +36,10 @@ const dataSlice = createSlice({
     name: 'data',
     initialState,
     reducers: {
+
+
+
+        //this should just be in serial data middleware?
         receiveData: (state, action: PayloadAction<ChannelData[]>) => {
             action.payload.forEach(newChannelData => {
               const existingChannelIndex = state.data.findIndex(channel => channel.channel === newChannelData.channel);
@@ -46,7 +54,20 @@ const dataSlice = createSlice({
                 state.data.push(newChannelData);
               }
             });
-          },
+          }
+          
+          
+          
+          
+          
+          ,
+
+
+
+
+
+
+
           setDataRetentionLimit: (state, action: PayloadAction<number>) => {
             state.dataRetentionLimit = action.payload;
           },
