@@ -27,7 +27,10 @@ const createSerialDataMiddleware = (fileStreamService: FileStreamService): Middl
         case 'data':
           if (Array.isArray(parsedMessage.data)) {
             const channelData = parsedMessage.data as ChannelData[];
-            store.dispatch(receiveData(channelData)); // here data is given to the redux store (*BAD*) 
+            // store.dispatch(receiveData(channelData));
+            //console.log(channelData)
+
+            // here data is given to the redux store (*BAD*) 
             // BTW, the data for the graphs is what is dispatched here, so we will still want to send this 
             // out but not through the redux store
             

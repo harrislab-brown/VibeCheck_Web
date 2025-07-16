@@ -2,6 +2,13 @@
 import store, { AppDispatch } from '../redux/store';
 import { setConnected, setDisconnected, setError } from '../features/serialSlice';
 import { UnknownAction } from 'redux';
+import { parseSerialData, Message, ChannelData, convertToCSV } from '../utils/dataParser';
+import { setStatusMessage } from '../features/systemStatusSlice';
+import { receiveData } from '../features/dataSlice';
+import { FileStreamService } from '../services/FileStreamService';
+import { RootState } from '../redux/rootReducer';
+import { dataBuffer } from '../utils/dataBuffer';
+
 
 // Define the action type
 type SerialDataReceivedAction = {
@@ -17,7 +24,10 @@ export class SerialService { //this class interacts directly with vibecheck thro
     private writeQueue: string[] = [];
     private isWriting: boolean = false;
     private dataBuffer = '';
-
+    private dataBuffer1 = ''
+    private fileStreamService = FileStreamService.getInstance();
+    private allData = 'data 60'
+    
   
     setDispatch(dispatch: AppDispatch) {
       this.dispatch = dispatch;
@@ -115,13 +125,66 @@ export class SerialService { //this class interacts directly with vibecheck thro
       private processIncomingData(data: string): void {
         this.dataBuffer += data;
         let newlineIndex: number;
+        this.dataBuffer1 = this.dataBuffer
+        
+  
+
+
         while ((newlineIndex = this.dataBuffer.indexOf('\n')) !== -1) {
           const completeMessage = this.dataBuffer.slice(0, newlineIndex);
           this.dataBuffer = this.dataBuffer.slice(newlineIndex + 1);
-          this.dispatchCompleteMessage(completeMessage); // completeMessage is what I want to send to serialDataMiddleware
-          //dispatch Complete Message is how the data gets to the store then serial data middleware
-          // need to get the data to serial data middleware somehow else
+          if (completeMessage.startsWith("data") ){
+
+          
+          const concatMessage = completeMessage.replace("data 10", '');
+          if (this.allData.length<2*929){
+            this.allData = this.allData.concat(concatMessage);
+          }
+          else{
+            //console.log(this.allData);
+            const parsedMessage: Message = parseSerialData(this.allData); 
+            this.allData = 'data 60';
+            this.allData = this.allData.concat(concatMessage);
+
+          
+          
+          switch (parsedMessage.type) {
+            case 'data':
+              if (Array.isArray(parsedMessage.data)) {
+                const channelData = parsedMessage.data as ChannelData[];
+                console.log(parsedMessage.data)
+                store.dispatch(receiveData(channelData));
+                    if (this.fileStreamService.getIsRecording()) { 
+                    const csvData = convertToCSV(channelData);
+                    this.fileStreamService.writeToFile(csvData).catch(error => {// writes to the csv file
+                    console.error('Error writing to file:', error);
+                    store.dispatch(setStatusMessage(`Error writing to file: ${error.message}`));
+                  });
+                }
+              }
+              break;
+            case 'event':
+              console.log('Event message:', parsedMessage.data);
+              if (typeof parsedMessage.data === 'string') {
+                store.dispatch(setStatusMessage(`Event: ${parsedMessage.data}`));
+              }
+              break;
+            case 'ack':
+              console.log('Acknowledgement:', parsedMessage.data);
+              // Handle acknowledgements if needed
+              break;
+            case 'error':
+              console.error('Error message:', parsedMessage.data);
+              if (typeof parsedMessage.data === 'string') {
+                store.dispatch(setStatusMessage(`Error: ${parsedMessage.data}`));
+              }
+              break;
+          }
         }
+
+          
+        }
+      }
       }
     
       private dispatchCompleteMessage(message: string): void {

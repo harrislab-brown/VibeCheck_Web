@@ -15,7 +15,9 @@ import { useState } from 'react';
 import SerialInput from './SerialInput';
 import Wavegen from './WavegenComponent';
 import StrobeComponent from './StrobeComponent';
-import Sensors from "./SensorsComponent"
+import Sensors from "./SensorsComponent";
+import FilterComponent from './FilterComponent';
+import DecimationComponent from './DecimationComponent';
 
 
 
@@ -77,8 +79,10 @@ const Layout: React.FC = () => {
                                 <AccordionItem key="calibration" aria-label="Calibration" title={"Calibration Controls"}>
                                 </AccordionItem>
                                   <AccordionItem key="filter" aria-label="Filter" title={"Digital Filter"}>
+                                    <FilterComponent/>
                                 </AccordionItem>  
                                   <AccordionItem key="decimation" aria-label="Decimation" title={"Decimation Controls"}>
+                                    <DecimationComponent/>
                                 </AccordionItem>  
                                   <AccordionItem key="triggering" aria-label="Triggering" title={"Triggering Controls"}>
                                 </AccordionItem>

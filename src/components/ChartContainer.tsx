@@ -29,7 +29,7 @@ const ChartContainer: React.FC = () => {
               key={channel} 
               channel={channel*2} 
               title={`Sensor ${channel}`} 
-              updateInterval={.01}
+              updateInterval={1}
             />
           ))}
         </div>

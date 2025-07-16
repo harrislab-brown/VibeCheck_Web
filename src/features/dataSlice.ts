@@ -13,19 +13,29 @@ export interface DataState{
     data: ChannelData[];
     dataRetentionLimit: number;
     error: string | null;
+    SmoothArray: number[]; // this should probably actually be a string stating what kind of filter to use since we probably wont actually use a moving average
+    Filtering: Boolean;
+    Decimating: Boolean;
+    SamplingFactor:number;
 }
 
 const initialState: DataState = {
     data: [],
-    dataRetentionLimit: 200,
+    dataRetentionLimit: 1000, // doesnt need to be this high
     error: null,
+    SmoothArray: [.1 , .2, .4, .2, .1],  // this should probably actually be a string stating what kind of filter to use since we probably wont actually use a moving average
+    Filtering: false,
+    Decimating: false,
+    SamplingFactor: 10,
+
+
 };
 
 
 export const periodicDataCleanup = (): AppThunk => (dispatch) => {
     const cleanupInterval = setInterval(() => {
       dispatch(cleanupOldData());
-    }, 60000); // Run every minute, adjust as needed
+    }, 10000); // Run every minute, adjust as needed
   
     // Return a function to clear the interval when needed
     return () => clearInterval(cleanupInterval);
@@ -39,7 +49,7 @@ const dataSlice = createSlice({
 
 
 
-        //this should just be in serial data middleware?
+        //this should just be in serial data middleware? Could instead make this more effecient
         receiveData: (state, action: PayloadAction<ChannelData[]>) => {
             action.payload.forEach(newChannelData => {
               const existingChannelIndex = state.data.findIndex(channel => channel.channel === newChannelData.channel);
@@ -78,14 +88,22 @@ const dataSlice = createSlice({
               }
             });
           },
-    }
+          toggleFiltering: (state) => {
+          state.Filtering = !state.Filtering;
+          },
+          setSamplingFactor: (state, action: PayloadAction<number>) =>{
+          state.SamplingFactor = action.payload;
+          },
 
-});
+}});
 
 export const {
     receiveData,
     setDataRetentionLimit,
     cleanupOldData,
+    toggleFiltering,
+    setSamplingFactor,
+
 
 } = dataSlice.actions;
 

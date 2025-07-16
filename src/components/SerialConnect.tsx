@@ -14,7 +14,7 @@ const SerialConnect: React.FC = () => {
 
 
     
-    const toggleSerialConnection = async () => {// make this function work withou redux and we are golden
+    const toggleSerialConnection = async () => {
         if (isConnected) {
             await dispatch(disconnectSerial());
         } else {
