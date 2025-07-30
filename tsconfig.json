@@ -18,7 +18,7 @@
     "rootDir": "./src",
     "noEmit": false
   },
-  "include": ["src"],
+  "include": ["src", "src/fili.min.js"],
   "exclude": [
     "node_modules",
     "**/*.spec.ts"

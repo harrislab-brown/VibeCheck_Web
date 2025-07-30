@@ -48,6 +48,11 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
   });
   const isPaused = useAppSelector(state => state.plot.isPaused);
   const data = useAppSelector((state: RootState) => state.data.data.find((d) => d.channel === channel));
+ // console.log(data)
+  
+  
+  
+  
   const plotSettings = useAppSelector(state => state.plot);
   const enabledSensorsCount = useAppSelector(state=> Object.values(state.sensor).filter(s=>s.isEnabled).length);
   const chartRef = useRef<ChartJS<"line"> | null>(null);
@@ -101,10 +106,12 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
   }, [channel, plotSettings.windowWidth, data, updateInterval]);
 
   const options: ChartOptions<'line'> = {
+    
     responsive: true,
     maintainAspectRatio: false,
     spanGaps: true,
     scales: {
+      
       y: {
         beginAtZero: false,
         min: plotSettings.autoRange ? undefined : plotSettings.yMin,
@@ -117,6 +124,9 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
       
     },
     plugins:{
+      decimation:{
+  enabled: false,
+  },
       title:{
         display: true,
         text: title,

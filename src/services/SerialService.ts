@@ -1,5 +1,5 @@
 // src/services/SerialService.ts
-import store, { AppDispatch } from '../redux/store';
+import store, { AppDispatch, } from '../redux/store';
 import { setConnected, setDisconnected, setError } from '../features/serialSlice';
 import { UnknownAction } from 'redux';
 import { parseSerialData, Message, ChannelData, convertToCSV } from '../utils/dataParser';
@@ -8,7 +8,7 @@ import { receiveData } from '../features/dataSlice';
 import { FileStreamService } from '../services/FileStreamService';
 import { RootState } from '../redux/rootReducer';
 import { dataBuffer } from '../utils/dataBuffer';
-
+import { useAppSelector } from '../redux/hooks';
 
 // Define the action type
 type SerialDataReceivedAction = {
@@ -141,7 +141,6 @@ export class SerialService { //this class interacts directly with vibecheck thro
             this.allData = this.allData.concat(concatMessage);
           }
           else{
-            //console.log(this.allData);
             const parsedMessage: Message = parseSerialData(this.allData); 
             this.allData = 'data 60';
             this.allData = this.allData.concat(concatMessage);
@@ -152,7 +151,7 @@ export class SerialService { //this class interacts directly with vibecheck thro
             case 'data':
               if (Array.isArray(parsedMessage.data)) {
                 const channelData = parsedMessage.data as ChannelData[];
-                console.log(parsedMessage.data)
+
                 store.dispatch(receiveData(channelData));
                     if (this.fileStreamService.getIsRecording()) { 
                     const csvData = convertToCSV(channelData);

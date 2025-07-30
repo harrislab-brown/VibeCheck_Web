@@ -76,15 +76,15 @@ const Layout: React.FC = () => {
                                 <AccordionItem key="serial" aria-label="Serial" title={"Serial Input"}>
                                   <SerialInput />
                                 </AccordionItem>
-                                <AccordionItem key="calibration" aria-label="Calibration" title={"Calibration Controls"}>
+                                <AccordionItem key="calibration" aria-label="Calibration" title={"Sensor Calibration"}>
                                 </AccordionItem>
-                                  <AccordionItem key="filter" aria-label="Filter" title={"Digital Filter"}>
+                                  <AccordionItem key="filter" aria-label="Filter" title={"Digital Filters"}>
                                     <FilterComponent/>
                                 </AccordionItem>  
-                                  <AccordionItem key="decimation" aria-label="Decimation" title={"Decimation Controls"}>
+                                  <AccordionItem key="decimation" aria-label="Decimation" title={"Decimation"}>
                                     <DecimationComponent/>
                                 </AccordionItem>  
-                                  <AccordionItem key="triggering" aria-label="Triggering" title={"Triggering Controls"}>
+                                  <AccordionItem key="triggering" aria-label="Triggering" title={"Triggering"}>
                                 </AccordionItem>
                               
                               

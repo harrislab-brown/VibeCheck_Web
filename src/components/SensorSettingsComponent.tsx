@@ -103,13 +103,15 @@ const SensorSettings: React.FC<SensorSettingsProps> = ({ accelNumber }) => {
         </Select>
       </div>
 
+
+
+
       <div className="mb-4">
         <Select
           label="Sample Rate"
           placeholder="Select a sample rate"
           selectedKeys={sampleRate ? [sampleRate] : []}
           onSelectionChange={(keys) => handleSampleRateChange(Array.from(keys)[0] as string)}
-          //isDisabled={!isEnabled}
         >
           {sampleRates.map((rate) => (
             <SelectItem key={rate.value} value={rate.value}>
@@ -118,6 +120,9 @@ const SensorSettings: React.FC<SensorSettingsProps> = ({ accelNumber }) => {
           ))}
         </Select>
       </div>
+
+
+
 
       {isEnabled && accelerationRange && sampleRate && (
         <p className="text-sm">

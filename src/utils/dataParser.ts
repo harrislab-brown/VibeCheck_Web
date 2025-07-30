@@ -5,11 +5,25 @@ export interface DataPoint {
   y: number;
   z: number;
 }
+export interface XYZData {
+  x:number;
+  y:number;
+  z:number;
+}
+
+export interface BufferData{
+  0: XYZData[];
+  1: XYZData[];
+  2: XYZData[];
+  
+
+}
 
 export interface ChannelData {
   channel: number;
   dataPoints: DataPoint[];
 }
+
 
 export interface Message {
   type: 'data' | 'event' | 'ack' | 'error';

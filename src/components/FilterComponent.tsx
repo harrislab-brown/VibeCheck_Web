@@ -4,9 +4,12 @@ import { Switch, Input, Button, Slider,  ButtonGroup,
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
+  Card,
+  Select,
+  SelectItem
  } from '@nextui-org/react';
 import { useAppSelector, useAppDispatch } from '../redux/hooks'
-import { toggleFiltering } from '../features/dataSlice';
+import { toggleFiltering, setCutoff, setOrder, setSecondCutoff, setFilter } from '../features/dataSlice';
 import { RootState } from '../redux/store';
 
 
@@ -27,21 +30,87 @@ export const ChevronDownIcon = () => {
 
 
 const FilterComponent: React.FC = () => {
-    const [selectedOption, setSelectedOption] = React.useState(new Set(["Smooth"]));
+ 
+  const orders = [
+    { label: "1", value: "1" },
+    { label: "2", value: "2" },
+    { label: "3", value: "3" },
+    { label: "4", value: "4" },
+  ];
+
+    const [order, setOrderLabel] = React.useState("");
+
+    const handleOrderChange = (e) => {
+    setOrderLabel(e.target.value);
+    };
+    
+
+    const  setOrderValue = (orderDispatch: string) =>{
+      dispatch(setOrder(Number(orderDispatch)))
+    }
+
+
+
+
+    const [selectedOption, setSelectedOption] = React.useState(new Set(["lowPass"]));
+    const [cutoff, setCutOffValue] = useState("");
+
+    const setFilterValue = (filterDispatch:string) =>{
+        dispatch(setFilter([]))    }
+    
+
+
+    const handleChange = () => {
+        dispatch(setCutoff(Number(cutoff)))
+    }
+
+    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>, submitFunction: () => void) => {
+        if (e.key === 'Enter') {
+            submitFunction();
+        }
+    };
+    const handleCutoffSubmit = () => {
+        dispatch(setCutoff(Number(cutoff)))
+    };
+
+
+
+
+    const [cutoff2, setCutOffValue2] = useState("");
+    
+
+    const handleChange2 = () => {
+        dispatch(setSecondCutoff(Number(cutoff2)))
+    }
+
+    const handleKeyPress2 = (e: React.KeyboardEvent<HTMLInputElement>, submitFunction: () => void) => {
+        if (e.key === 'Enter') {
+            submitFunction();
+        }
+    };
+    const handleCutoffSubmit2 = () => {
+        dispatch(setSecondCutoff(Number(cutoff2)))
+    };
+
+
+
+
+
 
     const descriptionsMap = {
-    Smooth:
-      " smooth the data, potentially in anticipation of decimation",
-    Filter2:
-      "description of some other filter",
-    Filter3: "description of a third filter",
+    lowPass:
+      " Standard low-pass Butterworth Filter",
+    highPass:
+      "Standard high-pass Butterworth Filter",
+    band: "Standard band-pass Butterworth Filter",
+    cut: "Standard cut-pass Butterworth Filter",
   };
 
 const labelsMap = {
-    Smooth: "Smooth the data",
-    Filter2: "Filter 2",
-  
-    Filter3: "Filter 3"
+    lowPass: "Low-Pass",
+    highPass: "High-Pass",
+    band: "Band-Pass",
+    cut: "Cut-Pass"
   };
 
 const selectedOptionValue = Array.from(selectedOption)[0];
@@ -50,7 +119,7 @@ const isFiltering = useAppSelector((state: RootState) => state.data.Filtering);
     
 
     const handleClick = () => {
-        
+        dispatch
         dispatch(toggleFiltering())
 
     };
@@ -58,7 +127,8 @@ const isFiltering = useAppSelector((state: RootState) => state.data.Filtering);
 
 return(
     <div>   
- <ButtonGroup variant="flat">
+      <div>
+ <ButtonGroup variant="flat" style={{margin: 20}}>
       <Button onClick={handleClick}             
 color={isFiltering ? "danger" : "primary"} style={{width: 200}} >{labelsMap[selectedOptionValue]} </Button>
       <Dropdown placement="bottom-end">
@@ -75,28 +145,84 @@ color={isFiltering ? "danger" : "primary"} style={{width: 200}} >{labelsMap[sele
           selectedKeys={selectedOption}
           selectionMode="single"
           onSelectionChange={setSelectedOption}
+          onAction={(keys) => setFilterValue(Array.from(keys)[0] as string)}
         >
-          <DropdownItem key="Smooth" description={descriptionsMap["Smooth"]}>
-            {labelsMap["Smooth"]}
+          <DropdownItem key="lowPass" description={descriptionsMap["lowPass"]}>
+            {labelsMap["lowPass"]}
           </DropdownItem>
-          <DropdownItem key="Filter2" description={descriptionsMap["Filter2"]}>
-            {labelsMap["Filter2"]}
+          <DropdownItem key="highPass" description={descriptionsMap["highPass"]}>
+            {labelsMap["highPass"]}
           </DropdownItem>
-          <DropdownItem key="Filter3" description={descriptionsMap["Filter3"]}>
-            {labelsMap["Filter3"]} 
+          <DropdownItem key="cut" description={descriptionsMap["cut"]}>
+            {labelsMap["cut"]} 
+          </DropdownItem>
+          <DropdownItem key="band" description={descriptionsMap["band"]}>
+            {labelsMap["band"]} 
           </DropdownItem>
         </DropdownMenu>
       </Dropdown>
     </ButtonGroup>
+    <p>{""}</p>
+</div>
+      <div> 
+        <div style={{display:'flex' , justifyContent:"space-around", alignItems:"flex-start"} }>
+  <Input 
+    errorMessage="Please enter a number"
+    value={cutoff}
+    onValueChange={setCutOffValue}
+    onChange={(e) => handleChange()}
+    onKeyUp={(e) => handleKeyPress(e, handleCutoffSubmit)}
+    isInvalid={isNaN(Number(cutoff)) }
+    label="Enter Cutoff" placeholder='Enter a number' 
+    style={{width:100 , marginRight:20}}/> 
+
+    <p> &nbsp; </p>
+
+  <Input 
+    errorMessage="Please enter a number"
+    value={cutoff2}
+    onValueChange={setCutOffValue2}
+    onChange={(e) => handleChange2()}
+    onKeyUp={(e) => handleKeyPress2(e, handleCutoffSubmit2)}
+    isInvalid={isNaN(Number(cutoff2)) }
+    label="Second Cutoff" placeholder='For Cut/Band' 
+    style={{width:100 , marginLeft:10}}/> 
+
+        </div>
+
+
+        <div
+        style={{justifyContent:"center", display:'flex', alignItems:'center'}}
+        >
+    <Select
+        className="max-w-xs"
+        style={{margin: 10 , width:200,}}
+        label="Order"
+        placeholder="Choose an Order"
+        selectedKeys={order}
+        variant="bordered"
+        onSelectionChange={(keys) => setOrderValue(Array.from(keys)[0] as string)}
+        onChange={handleOrderChange}
+      >
+        {orders.map((currentorder) => (
+          <SelectItem key={currentorder.label}>{currentorder.value}</SelectItem>
+        ))}
+    </Select>
+    </div>
+      </div>
+
+
 
 
 
     <p>
         {isFiltering? "Filtering": "Not Filtering " }
     </p>
- {/* <Input label="Moving Average Array" placeholder='Enter Array' /> */}
-     </div>
 
+
+
+
+    </div>
 
 
 
