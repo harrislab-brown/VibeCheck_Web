@@ -18,6 +18,8 @@ import StrobeComponent from './StrobeComponent';
 import Sensors from "./SensorsComponent";
 import FilterComponent from './FilterComponent';
 import DecimationComponent from './DecimationComponent';
+import ChartComponent from './ChartComponent';
+
 
 
 

@@ -12,9 +12,7 @@ export interface XYZData {
 }
 
 export interface BufferData{
-  0: XYZData[];
-  1: XYZData[];
-  2: XYZData[];
+  data: XYZData[];
   
 
 }

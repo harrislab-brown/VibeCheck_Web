@@ -13,9 +13,10 @@ import { setSamplingFactor } from '../features/dataSlice';
 const DecimationComponent: React.FC = () => {
 
 const isDecimating = useAppSelector((state: RootState) => state.data.Decimating);
+const isFiltering = useAppSelector((state: RootState) => state.data.Filtering);
+
 
   const handleClick = () => {
-        (!isDecimating && dispatch(toggleFiltering()))
         dispatch(toggleDecimating())
 
     };
@@ -49,7 +50,7 @@ const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>, submitFunction
     onChange={(e) => handleChange()}
     onKeyUp={(e) => handleKeyPress(e, handleFrequencySubmit)}
     isInvalid={isNaN(Number(samplingFactor)) }
-    label="Sampling Factor" placeholder='Enter a number' 
+    label="Sampling Factor" placeholder='Enter a number (default is 10)' 
     /> 
 
     <Button onClick={handleClick}             

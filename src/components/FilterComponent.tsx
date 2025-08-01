@@ -119,7 +119,7 @@ const isFiltering = useAppSelector((state: RootState) => state.data.Filtering);
     
 
     const handleClick = () => {
-        dispatch
+        
         dispatch(toggleFiltering())
 
     };

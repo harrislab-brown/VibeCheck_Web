@@ -7,6 +7,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { ChannelData, DataPoint, XYZData, BufferData } from '../utils/dataParser'
 import { AppThunk } from '../redux/store';
+import { RootState} from '../redux/store'
 
 
 export interface DataState{
@@ -16,11 +17,13 @@ export interface DataState{
     Filtering: Boolean;
     Decimating: Boolean;
     SamplingFactor:number;
+    DecimationCounter: number;
     cutoff: number;
     order: number;
     secondCutoff: number;
     Filter: number[];
     Buffer: BufferData[];
+    newData: Boolean;
 }
 
 const initialState: DataState = {
@@ -30,9 +33,11 @@ const initialState: DataState = {
     Filtering: false,
     Decimating: false,
     SamplingFactor: 10,
+    DecimationCounter: 0,
     cutoff:100, //I don't know what a reasonable default is
     order: 1, 
     secondCutoff: 200, // might want this to start null
+    newData: false,
     Filter: [0.02863572, 0.14296245, 0.32840183, 0.32840183, 0.14296245, 0.02863572],
     //[0.00645125, 0.00852199, 0.0143337,  0.02357083, 0.03548966, 0.04899215,
  //0.06274653, 0.07534035, 0.08544693, 0.0919841,  0.09424502, 0.0919841,
@@ -82,16 +87,37 @@ const dataSlice = createSlice({
 
 
         receiveData: (state, action: PayloadAction<ChannelData[]>) => {//need to check that packets of data are all the same channel, otherwise channels are getting mixed up.
-            action.payload.forEach(newChannelData => {
+          state.newData = true
+          action.payload.forEach(newChannelData => {
               const existingChannelIndex = state.data.findIndex(channel => channel.channel === newChannelData.channel);
          
               if (existingChannelIndex !== -1) {
                 for (let x = 0 ; x < newChannelData.dataPoints.length; x++){
                   var xyz: XYZData = {x:newChannelData.dataPoints[x]['x'], y:newChannelData.dataPoints[x]['y'],z:newChannelData.dataPoints[x]['z']}
                   state.Buffer[newChannelData.channel].data.push(xyz)
-                                  
                   state.Buffer[newChannelData.channel].data = state.Buffer[newChannelData.channel].data.slice(-30)
-                if (state.Filtering){
+                if(state.Decimating){
+                    state.DecimationCounter = state.DecimationCounter + 1
+                    if (state.DecimationCounter === state.SamplingFactor){
+                    console.log("undecimated datapoint")
+                    console.log(x)
+                      state.DecimationCounter = 0
+                      var yx = 0
+                      var yy = 0
+                      var yz = 0
+                      for (let h= 0; h < state.Filter.length; h++){
+                    
+                       yx = yx + (state.Filter[h])*(state.Buffer[newChannelData.channel].data[state.Filter.length-h].x) // I think these indeces are correct
+                       yy = yy + (state.Filter[h])*(state.Buffer[newChannelData.channel].data[state.Filter.length-h].y)
+                       yz = yz + (state.Filter[h])*(state.Buffer[newChannelData.channel].data[state.Filter.length-h].z)
+
+                      }
+                      var filteredDatapoint: DataPoint = {channel: newChannelData.dataPoints[x].channel, timestamp: newChannelData.dataPoints[x].timestamp, x:yx, y:yy, z:yz }
+                      state.data[existingChannelIndex].dataPoints.push(filteredDatapoint);
+                    }
+                  }
+                else if (state.Filtering && !state.Decimating){
+                  
                  //here goes a check for whether that sensor is being filtered atm  if()
 
                   var yx = 0
@@ -116,7 +142,7 @@ const dataSlice = createSlice({
 
 
               }
-              if (!state.Filtering){
+              if (!state.Filtering && !state.Decimating){
                 state.data[existingChannelIndex].dataPoints.push(...newChannelData.dataPoints);
 
               }
@@ -137,8 +163,7 @@ const dataSlice = createSlice({
                 
               }
             });
-            console.log("end buffer")
-            console.log(state.Buffer)
+       
           }
           
           
@@ -167,7 +192,13 @@ const dataSlice = createSlice({
           state.Filtering = !state.Filtering;
           },
           setSamplingFactor: (state, action: PayloadAction<number>) =>{
-          state.SamplingFactor = action.payload;
+          state.DecimationCounter = 0
+          if (action.payload != 0){
+              state.SamplingFactor = action.payload;
+              console.log("new sampling factor")
+              console.log(state.SamplingFactor)
+          }
+        
           },
           setCutoff: (state, action: PayloadAction<number>) =>{
           state.cutoff = action.payload;
@@ -180,9 +211,14 @@ const dataSlice = createSlice({
           },
           toggleDecimating: (state) => {
           state.Decimating = !state.Decimating;
+          console.log("decimating toggled")
+          console.log(state.Decimating)
           },
           setFilter: (state, action: PayloadAction<number[]>) =>{
           state.Filter = action.payload;
+          },
+          usedData: (state) =>{
+          state.newData = false;
           },
 
 }});
@@ -198,6 +234,7 @@ export const {
     toggleDecimating,
     setSecondCutoff,
     setFilter,
+    usedData,
 
 
 } = dataSlice.actions;
