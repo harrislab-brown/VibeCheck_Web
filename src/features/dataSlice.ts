@@ -5,9 +5,14 @@
 
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { ChannelData, DataPoint, XYZData, BufferData } from '../utils/dataParser'
+import { ChannelData, DataPoint, XYZData, BufferData, convertToCSV } from '../utils/dataParser'
 import { AppThunk } from '../redux/store';
 import { RootState} from '../redux/store'
+import { FileStreamService } from '../services/FileStreamService';
+
+var fileStreamService = FileStreamService.getInstance();
+
+
 
 
 export interface DataState{
@@ -21,9 +26,10 @@ export interface DataState{
     cutoff: number;
     order: number;
     secondCutoff: number;
-    Filter: number[];
+    Filter: number[][];
     Buffer: BufferData[];
     newData: Boolean;
+    frequency: number[];
 }
 
 const initialState: DataState = {
@@ -35,20 +41,44 @@ const initialState: DataState = {
     SamplingFactor: 10,
     DecimationCounter: 0,
     cutoff:100, //I don't know what a reasonable default is
-    order: 1, 
+    order: 30, 
     secondCutoff: 200, // might want this to start null
     newData: false,
-    Filter: [0.02863572, 0.14296245, 0.32840183, 0.32840183, 0.14296245, 0.02863572],
-    //[0.00645125, 0.00852199, 0.0143337,  0.02357083, 0.03548966, 0.04899215,
- //0.06274653, 0.07534035, 0.08544693, 0.0919841,  0.09424502, 0.0919841,
- //0.08544693, 0.07534035, 0.06274653, 0.04899215, 0.03548966, 0.02357083,
- //0.0143337,  0.00852199, 0.00645125],
+    Filter: [[0.02863572, 0.14296245, 0.32840183, 0.32840183, 0.14296245, 0.02863572], [0.02863572, 0.14296245, 0.32840183, 0.32840183, 0.14296245, 0.02863572], [0.02863572, 0.14296245, 0.32840183, 0.32840183, 0.14296245, 0.02863572]],
+    frequency: [52, 52, 52],
+    
+
+
     Buffer: [{data:[{x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0}, //each buffer data is a different channel (sensor)
       {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
       {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
       {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
       {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
-      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0}
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
     ]} 
     
     , {data:[{x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
@@ -56,14 +86,58 @@ const initialState: DataState = {
       {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
       {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
       {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
-      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0}]}
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},{x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},{x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},{x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},{x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},]}
     
     , {data:[{x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
       {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
       {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
       {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
       {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
-      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0}]}],
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},
+      {x:0,y:0,z:0} , {x:0,y:0,z:0},{x:0,y:0,z:0}, {x:0,y:0,z:0}, {x:0,y:0,z:0},]}],
 
 
 };
@@ -86,20 +160,19 @@ const dataSlice = createSlice({
 
 
 
-        receiveData: (state, action: PayloadAction<ChannelData[]>) => {//need to check that packets of data are all the same channel, otherwise channels are getting mixed up.
-          state.newData = true
+        receiveData: (state, action: PayloadAction<ChannelData[]>) => {
           action.payload.forEach(newChannelData => {
+             
               const existingChannelIndex = state.data.findIndex(channel => channel.channel === newChannelData.channel);
-         
+
               if (existingChannelIndex !== -1) {
                 for (let x = 0 ; x < newChannelData.dataPoints.length; x++){
                   var xyz: XYZData = {x:newChannelData.dataPoints[x]['x'], y:newChannelData.dataPoints[x]['y'],z:newChannelData.dataPoints[x]['z']}
                   state.Buffer[newChannelData.channel].data.push(xyz)
-                  state.Buffer[newChannelData.channel].data = state.Buffer[newChannelData.channel].data.slice(-30)
+                  state.Buffer[newChannelData.channel].data = state.Buffer[newChannelData.channel].data.slice(-100)
                 if(state.Decimating){
                     state.DecimationCounter = state.DecimationCounter + 1
                     if (state.DecimationCounter === state.SamplingFactor){
-                    console.log("undecimated datapoint")
                     console.log(x)
                       state.DecimationCounter = 0
                       var yx = 0
@@ -107,13 +180,22 @@ const dataSlice = createSlice({
                       var yz = 0
                       for (let h= 0; h < state.Filter.length; h++){
                     
-                       yx = yx + (state.Filter[h])*(state.Buffer[newChannelData.channel].data[state.Filter.length-h].x) // I think these indeces are correct
-                       yy = yy + (state.Filter[h])*(state.Buffer[newChannelData.channel].data[state.Filter.length-h].y)
-                       yz = yz + (state.Filter[h])*(state.Buffer[newChannelData.channel].data[state.Filter.length-h].z)
+                       yx = yx + (state.Filter[newChannelData.channel][h])*(state.Buffer[newChannelData.channel].data[state.Filter.length-h].x) // I think these indeces are correct
+                       yy = yy + (state.Filter[newChannelData.channel][h])*(state.Buffer[newChannelData.channel].data[state.Filter.length-h].y)
+                       yz = yz + (state.Filter[newChannelData.channel][h])*(state.Buffer[newChannelData.channel].data[state.Filter.length-h].z)
 
                       }
                       var filteredDatapoint: DataPoint = {channel: newChannelData.dataPoints[x].channel, timestamp: newChannelData.dataPoints[x].timestamp, x:yx, y:yy, z:yz }
                       state.data[existingChannelIndex].dataPoints.push(filteredDatapoint);
+                      
+                      if (fileStreamService.getIsRecording()) {
+                        console.log('recorded') 
+                        const channelData:ChannelData = {channel:newChannelData.dataPoints[x].channel, dataPoints:[filteredDatapoint]}
+                        const csvData = convertToCSV([channelData]);
+                        fileStreamService.writeToFile(csvData).catch(error => {// writes to the csv file
+                        console.error('Error writing to file:', error);
+                        });
+                      }
                     }
                   }
                 else if (state.Filtering && !state.Decimating){
@@ -125,14 +207,21 @@ const dataSlice = createSlice({
                   var yz = 0
                    for (let h= 0; h < state.Filter.length; h++){
                     
-                       yx = yx + (state.Filter[h])*(state.Buffer[newChannelData.channel].data[state.Filter.length-h].x) // I think these indeces are correct
-                       yy = yy + (state.Filter[h])*(state.Buffer[newChannelData.channel].data[state.Filter.length-h].y)
-                       yz = yz + (state.Filter[h])*(state.Buffer[newChannelData.channel].data[state.Filter.length-h].z)
+                       yx = yx + (state.Filter[newChannelData.channel][h])*(state.Buffer[newChannelData.channel].data[state.Filter.length-h].x) // I think these indeces are correct
+                       yy = yy + (state.Filter[newChannelData.channel][h])*(state.Buffer[newChannelData.channel].data[state.Filter.length-h].y)
+                       yz = yz + (state.Filter[newChannelData.channel][h])*(state.Buffer[newChannelData.channel].data[state.Filter.length-h].z)
 
                    }
                   var filteredDatapoint: DataPoint = {channel: newChannelData.dataPoints[x].channel, timestamp: newChannelData.dataPoints[x].timestamp, x:yx, y:yy, z:yz }
                   state.data[existingChannelIndex].dataPoints.push(filteredDatapoint);
-
+                  if (fileStreamService.getIsRecording()) { 
+                    console.log('recorded')
+                        const channelData:ChannelData = {channel:newChannelData.dataPoints[x].channel, dataPoints:[filteredDatapoint]}
+                        const csvData = convertToCSV([channelData]);
+                        fileStreamService.writeToFile(csvData).catch(error => {// writes to the csv file
+                        console.error('Error writing to file:', error);
+                        });
+                      }
                   
                 
 
@@ -144,7 +233,13 @@ const dataSlice = createSlice({
               }
               if (!state.Filtering && !state.Decimating){
                 state.data[existingChannelIndex].dataPoints.push(...newChannelData.dataPoints);
-
+                if (fileStreamService.getIsRecording()) { 
+                        console.log('recorded')
+                        const csvData = convertToCSV([newChannelData]);
+                        fileStreamService.writeToFile(csvData).catch(error => {// writes to the csv file
+                        console.error('Error writing to file:', error);
+                        });
+                      }
               }
                 
                 // Add new data points to the correct channel
@@ -161,7 +256,7 @@ const dataSlice = createSlice({
               } else {
                 state.data.push(newChannelData); //makes the new channel if it doesnt exist?
                 
-              }
+              } 
             });
        
           }
@@ -200,11 +295,66 @@ const dataSlice = createSlice({
           }
         
           },
+
+          setFilter:(state) => {
+
+
+          },
+
           setCutoff: (state, action: PayloadAction<number>) =>{
+          if (action.payload != 0){
           state.cutoff = action.payload;
+          for (var h = 0; h < 3; h++){
+          const sigma = state.frequency[h]/(2*Math.PI*state.cutoff)
+          const f = new Array(state.order).fill(0);
+          var sum = 0
+          for (var i = 0; i<f.length; i++){
+          
+            const x = i - Math.floor((f.length-1)/2) 
+            f[i] = Math.exp((-(x*x))/(2*sigma*sigma))
+            sum = sum + f[i]
+          }
+
+          for (var j = 0; j<f.length-1; j++){
+            f[j] = f[j]/sum
+
+
+          }
+          
+          state.Filter[h] = f
+          console.log("new filter")
+          console.log(f)
+          console.log(state.frequency)
+          }}
+
+
           },
           setOrder: (state, action: PayloadAction<number>) =>{
-          state.order = action.payload;
+          if ((action.payload != 0) && action.payload<100){
+          for (var h = 0; h < 3; h++){
+          const sigma = state.frequency[h]/(2*Math.PI*state.cutoff)
+          const f = new Array(state.order).fill(0);
+          var sum = 0
+          for (var i = 0; i<f.length; i++){
+          
+            const x = i - Math.floor((f.length-1)/2) 
+            f[i] = Math.exp((-(x*x))/(2*sigma*sigma))
+            sum = sum + f[i]
+          }
+
+          for (var j = 0; j<f.length-1; j++){
+            f[j] = f[j]/sum
+
+
+          }
+          
+          state.Filter[h] = f
+          console.log("new filter")
+          console.log(f)
+          console.log(state.frequency[h])
+          }
+          }
+
           },
           setSecondCutoff: (state, action: PayloadAction<number>) =>{
           state.secondCutoff = action.payload;
@@ -214,12 +364,11 @@ const dataSlice = createSlice({
           console.log("decimating toggled")
           console.log(state.Decimating)
           },
-          setFilter: (state, action: PayloadAction<number[]>) =>{
-          state.Filter = action.payload;
-          },
-          usedData: (state) =>{
-          state.newData = false;
-          },
+         
+          setFilterFrequency: (state, action: PayloadAction<number[]>) =>{
+          state.frequency[action.payload[0]] = action.payload[1];
+          }
+         
 
 }});
 
@@ -234,7 +383,7 @@ export const {
     toggleDecimating,
     setSecondCutoff,
     setFilter,
-    usedData,
+    setFilterFrequency
 
 
 } = dataSlice.actions;

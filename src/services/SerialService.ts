@@ -152,14 +152,14 @@ export class SerialService { //this class interacts directly with vibecheck thro
               if (Array.isArray(parsedMessage.data)) {
                 const channelData = parsedMessage.data as ChannelData[];
 
-                store.dispatch(receiveData(channelData));
-                    if (this.fileStreamService.getIsRecording()) { 
-                    const csvData = convertToCSV(channelData);
-                    this.fileStreamService.writeToFile(csvData).catch(error => {// writes to the csv file
-                    console.error('Error writing to file:', error);
-                    store.dispatch(setStatusMessage(`Error writing to file: ${error.message}`));
-                  });
-                }
+                 store.dispatch(receiveData(channelData));
+                //     if (this.fileStreamService.getIsRecording()) { 
+                //     const csvData = convertToCSV(channelData);
+                //     this.fileStreamService.writeToFile(csvData).catch(error => {// writes to the csv file
+                //     console.error('Error writing to file:', error);
+                //     store.dispatch(setStatusMessage(`Error writing to file: ${error.message}`));
+                //   });
+                // }
               }
               break;
             case 'event':

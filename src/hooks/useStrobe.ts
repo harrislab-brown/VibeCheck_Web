@@ -3,7 +3,8 @@ import { useEffect } from 'react';
 import { RootState } from '../redux/store';
 import { strobeSlice } from '../features/strobeSlice';
 import { sendSerialData } from '../features/serialOutputSlice';
-import { useAppDispatch } from '../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { wavegenSlice } from '../features/wavegenSlice';
 
 export const useStrobe = () => {
   const dispatch = useAppDispatch();
@@ -14,8 +15,25 @@ export const useStrobe = () => {
     dispatch(strobeSlice.actions.toggleStrobe());
   };
 
+  const toggleStrobeType = () => {
+    dispatch(strobeSlice.actions.toggleStrobeType())
+    const detuning = useAppSelector((state: RootState) => state.strobe.detuning);
+    if (detuning){
+      const wavegenFrequency = useAppSelector((state: RootState) => state.wavegen.frequency);
+      const detune = useAppSelector((state: RootState) => state.strobe.detune);
+      dispatch(strobeSlice.actions.setStrobeFrequency(wavegenFrequency + detune));
+    }
+
+  }
+
+  const setDetune = (detune:number) => {
+    dispatch(strobeSlice.actions.setDetune(detune))
+   // const wavegenFrequency = useAppSelector((state: RootState) => state.wavegen.frequency);
+    //dispatch(strobeSlice.actions.setStrobeFrequency(wavegenFrequency + detune));
+  }
+
   const setFrequency = (frequency: number) => {
-    dispatch(strobeSlice.actions.setFrequency(frequency));
+    dispatch(strobeSlice.actions.setStrobeFrequency(frequency));
   };
 
   const setExposure = (exposure: number) => {
@@ -59,8 +77,11 @@ export const useStrobe = () => {
     ...strobeState,
     isSerialConnected,
     toggleStrobe,
+    toggleStrobeType,
+    setDetune,
     setFrequency,
     setExposure,
     setPhase,
+
   };
 };

@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
 import { Switch, Input, Button, Slider } from '@nextui-org/react';
 import { useStrobe } from '../hooks/useStrobe';
+import { RootState } from '../redux/store';
+import { useAppSelector, useAppDispatch } from '../redux/hooks'
+
 
 const StrobeComponent: React.FC = () => {
-    const { isEnabled, frequency, exposure, phase, isSerialConnected, toggleStrobe, setFrequency, setExposure, setPhase } = useStrobe();
+    const [offsetValue , setOffsetValue] = React.useState(25);
+
+
+
+    const { isEnabled, frequency, exposure, phase, detune, detuning, isSerialConnected, toggleStrobe, toggleStrobeType, setDetune, setFrequency, setExposure, setPhase } = useStrobe();
 
     const [frequencyInput, setFrequencyInput] = useState(frequency.toString());
     const [exposureInput, setExposureInput] = useState(exposure.toString());
@@ -45,7 +52,34 @@ const StrobeComponent: React.FC = () => {
                     {isEnabled ? 'Enabled' : 'Disabled'}
                 </span>
             </div>
+        <div >
 
+            <div className="mb-4 flex items-center">
+                <Switch 
+                    isSelected={detuning}
+                    onValueChange={toggleStrobeType}
+                />
+                <span className="ml-2">
+                    {detuning ? 'detuning' : 'custom input'}
+                </span>
+            </div>
+
+<div className="flex flex-col gap-2 w-full h-full max-w-md items-start justify-center">
+      <Slider
+        className="block mb-2"
+        fillOffset={0}
+        formatOptions={{signDisplay: "always"}}
+        label="detune frequency"
+        maxValue={3}
+        minValue={-3}
+        step={1}
+        size="lg"
+        value={detune}
+        onChange={(value) => setDetune(value as number)}
+        isDisabled = {!detuning}
+      />
+    </div>
+            
             <div className="mb-4 flex items-center">
                 <Input
                     label="Frequency (Hz)"
@@ -54,12 +88,16 @@ const StrobeComponent: React.FC = () => {
                     onChange={(e) => setFrequencyInput(e.target.value)}
                     onKeyUp={(e) => handleKeyPress(e, handleFrequencySubmit)}
                     className="max-w-xs mr-2"
+                    isDisabled = {detuning}
                 />
-                <Button onClick={handleFrequencySubmit} disabled={!isEnabled || !isSerialConnected}>
+                <Button onClick={handleFrequencySubmit} 
+                disabled={!isEnabled || !isSerialConnected}
+                isDisabled = {detuning}
+                >
                     Send
                 </Button>
             </div>
-
+        </div>
             <div className="mb-4 flex items-center">
                 <Input
                     label="Exposure (0% - 100%)"

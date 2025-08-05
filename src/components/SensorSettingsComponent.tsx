@@ -9,6 +9,7 @@ import {
   SensorState
 } from '../features/sensorSlice';
 import { RootState } from '../redux/rootReducer';
+import { setFilterFrequency } from '../features/dataSlice';
 
 interface SensorSettingsProps {
   accelNumber: number;
@@ -69,6 +70,7 @@ const SensorSettings: React.FC<SensorSettingsProps> = ({ accelNumber }) => {
 
   const handleSampleRateChange = (value: string) => {
     dispatch(setSampleRate({ accelNumber, rate: value }));
+    dispatch(setFilterFrequency([accelNumber , Number(value)]))
   };
 
 

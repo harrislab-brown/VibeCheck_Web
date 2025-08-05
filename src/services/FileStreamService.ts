@@ -19,7 +19,7 @@ export class FileStreamService {
       this.outputDirectory = directory;
     }
   
-    async startRecording(filename: string) { //this is where filecontainer accesses the data
+    async startRecording(filename: string) { 
       if (!this.outputDirectory) {
         throw new Error('Output directory not set');
       }

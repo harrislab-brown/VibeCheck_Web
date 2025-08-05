@@ -32,10 +32,18 @@ export const ChevronDownIcon = () => {
 const FilterComponent: React.FC = () => {
  
   const orders = [
-    { label: "1", value: "1" },
-    { label: "2", value: "2" },
-    { label: "3", value: "3" },
-    { label: "4", value: "4" },
+    { label: "5", value: "5" },
+    { label: "10", value: "10" },
+    { label: "15", value: "15" },
+    { label: "20", value: "20" },
+    { label: "25", value: "25" },
+    { label: "30", value: "30" },
+    { label: "35", value: "35" },
+    { label: "40", value: "40" },
+    { label: "45", value: "45" },
+    { label: "50", value: "50" },
+    { label: "55", value: "55" },
+    { label: "60", value: "60" },
   ];
 
     const [order, setOrderLabel] = React.useState("");
@@ -54,9 +62,6 @@ const FilterComponent: React.FC = () => {
 
     const [selectedOption, setSelectedOption] = React.useState(new Set(["lowPass"]));
     const [cutoff, setCutOffValue] = useState("");
-
-    const setFilterValue = (filterDispatch:string) =>{
-        dispatch(setFilter([]))    }
     
 
 
@@ -76,11 +81,11 @@ const FilterComponent: React.FC = () => {
 
 
 
-    const [cutoff2, setCutOffValue2] = useState("");
+    const [filterOrder, setFilterOrder] = useState("");
     
 
     const handleChange2 = () => {
-        dispatch(setSecondCutoff(Number(cutoff2)))
+        dispatch(setOrder(Math.floor(Number(filterOrder))))
     }
 
     const handleKeyPress2 = (e: React.KeyboardEvent<HTMLInputElement>, submitFunction: () => void) => {
@@ -88,8 +93,8 @@ const FilterComponent: React.FC = () => {
             submitFunction();
         }
     };
-    const handleCutoffSubmit2 = () => {
-        dispatch(setSecondCutoff(Number(cutoff2)))
+    const handleOrderSubmit2 = () => {
+        dispatch(setOrder(Math.floor(Number(filterOrder))))
     };
 
 
@@ -145,12 +150,12 @@ color={isFiltering ? "danger" : "primary"} style={{width: 200}} >{labelsMap[sele
           selectedKeys={selectedOption}
           selectionMode="single"
           onSelectionChange={setSelectedOption}
-          onAction={(keys) => setFilterValue(Array.from(keys)[0] as string)}
+          // onAction={(keys) => setFilterValue(Array.from(keys)[0] as string)}
         >
           <DropdownItem key="lowPass" description={descriptionsMap["lowPass"]}>
             {labelsMap["lowPass"]}
           </DropdownItem>
-          <DropdownItem key="highPass" description={descriptionsMap["highPass"]}>
+          {/* <DropdownItem key="highPass" description={descriptionsMap["highPass"]}>
             {labelsMap["highPass"]}
           </DropdownItem>
           <DropdownItem key="cut" description={descriptionsMap["cut"]}>
@@ -158,7 +163,7 @@ color={isFiltering ? "danger" : "primary"} style={{width: 200}} >{labelsMap[sele
           </DropdownItem>
           <DropdownItem key="band" description={descriptionsMap["band"]}>
             {labelsMap["band"]} 
-          </DropdownItem>
+          </DropdownItem> */}
         </DropdownMenu>
       </Dropdown>
     </ButtonGroup>
@@ -173,42 +178,23 @@ color={isFiltering ? "danger" : "primary"} style={{width: 200}} >{labelsMap[sele
     onChange={(e) => handleChange()}
     onKeyUp={(e) => handleKeyPress(e, handleCutoffSubmit)}
     isInvalid={isNaN(Number(cutoff)) }
-    label="Enter Cutoff" placeholder='Enter a number' 
+    label="Cutoff" placeholder='Enter a number' 
     style={{width:100 , marginRight:20}}/> 
 
     <p> &nbsp; </p>
 
   <Input 
-    errorMessage="Please enter a number"
-    value={cutoff2}
-    onValueChange={setCutOffValue2}
+    errorMessage="Please enter an integer less than 100"
+    value={filterOrder}
+    onValueChange={setFilterOrder}
     onChange={(e) => handleChange2()}
-    onKeyUp={(e) => handleKeyPress2(e, handleCutoffSubmit2)}
-    isInvalid={isNaN(Number(cutoff2)) }
-    label="Second Cutoff" placeholder='For Cut/Band' 
+    onKeyUp={(e) => handleKeyPress2(e, handleOrderSubmit2)}
+    isInvalid={   isNaN(Number(filterOrder)) || (Number(filterOrder)>100) }
+    label="Order" placeholder='Enter an Integer' 
     style={{width:100 , marginLeft:10}}/> 
 
         </div>
 
-
-        <div
-        style={{justifyContent:"center", display:'flex', alignItems:'center'}}
-        >
-    <Select
-        className="max-w-xs"
-        style={{margin: 10 , width:200,}}
-        label="Order"
-        placeholder="Choose an Order"
-        selectedKeys={order}
-        variant="bordered"
-        onSelectionChange={(keys) => setOrderValue(Array.from(keys)[0] as string)}
-        onChange={handleOrderChange}
-      >
-        {orders.map((currentorder) => (
-          <SelectItem key={currentorder.label}>{currentorder.value}</SelectItem>
-        ))}
-    </Select>
-    </div>
       </div>
 
 
