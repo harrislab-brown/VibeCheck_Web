@@ -19,6 +19,7 @@ const store = configureStore({
       thunk: {
         extraArgument: { serialService, fileStreamService },
       },
+      SerializableStateInvariantMiddleware: false,
     }).concat(serialOutputMiddleware),
     devTools: {
       trace: true, // Enable trace feature

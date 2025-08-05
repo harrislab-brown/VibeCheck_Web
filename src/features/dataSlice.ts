@@ -9,6 +9,7 @@ import { ChannelData, DataPoint, XYZData, BufferData, convertToCSV } from '../ut
 import { AppThunk } from '../redux/store';
 import { RootState} from '../redux/store'
 import { FileStreamService } from '../services/FileStreamService';
+import { act } from 'react';
 
 var fileStreamService = FileStreamService.getInstance();
 
@@ -173,16 +174,15 @@ const dataSlice = createSlice({
                 if(state.Decimating){
                     state.DecimationCounter = state.DecimationCounter + 1
                     if (state.DecimationCounter === state.SamplingFactor){
-                    console.log(x)
                       state.DecimationCounter = 0
                       var yx = 0
                       var yy = 0
                       var yz = 0
-                      for (let h= 0; h < state.Filter.length; h++){
-                    
-                       yx = yx + (state.Filter[newChannelData.channel][h])*(state.Buffer[newChannelData.channel].data[state.Filter.length-h].x) // I think these indeces are correct
-                       yy = yy + (state.Filter[newChannelData.channel][h])*(state.Buffer[newChannelData.channel].data[state.Filter.length-h].y)
-                       yz = yz + (state.Filter[newChannelData.channel][h])*(state.Buffer[newChannelData.channel].data[state.Filter.length-h].z)
+                      for (let h= 0; h < state.Filter[newChannelData.channel].length; h++){
+                        console.log(newChannelData.channel)
+                       yx = yx + (state.Filter[newChannelData.channel][h])*(state.Buffer[newChannelData.channel].data[state.Filter[newChannelData.channel].length-h].x) // I think these indeces are correct
+                       yy = yy + (state.Filter[newChannelData.channel][h])*(state.Buffer[newChannelData.channel].data[state.Filter[newChannelData.channel].length-h].y)
+                       yz = yz + (state.Filter[newChannelData.channel][h])*(state.Buffer[newChannelData.channel].data[state.Filter[newChannelData.channel].length-h].z)
 
                       }
                       var filteredDatapoint: DataPoint = {channel: newChannelData.dataPoints[x].channel, timestamp: newChannelData.dataPoints[x].timestamp, x:yx, y:yy, z:yz }
@@ -205,11 +205,11 @@ const dataSlice = createSlice({
                   var yx = 0
                   var yy = 0
                   var yz = 0
-                   for (let h= 0; h < state.Filter.length; h++){
+                   for (let h= 0; h < state.Filter[newChannelData.channel].length; h++){
                     
-                       yx = yx + (state.Filter[newChannelData.channel][h])*(state.Buffer[newChannelData.channel].data[state.Filter.length-h].x) // I think these indeces are correct
-                       yy = yy + (state.Filter[newChannelData.channel][h])*(state.Buffer[newChannelData.channel].data[state.Filter.length-h].y)
-                       yz = yz + (state.Filter[newChannelData.channel][h])*(state.Buffer[newChannelData.channel].data[state.Filter.length-h].z)
+                       yx = yx + (state.Filter[newChannelData.channel][h])*(state.Buffer[newChannelData.channel].data[state.Filter[newChannelData.channel].length-h].x) // I think these indeces are correct
+                       yy = yy + (state.Filter[newChannelData.channel][h])*(state.Buffer[newChannelData.channel].data[state.Filter[newChannelData.channel].length-h].y)
+                       yz = yz + (state.Filter[newChannelData.channel][h])*(state.Buffer[newChannelData.channel].data[state.Filter[newChannelData.channel].length-h].z)
 
                    }
                   var filteredDatapoint: DataPoint = {channel: newChannelData.dataPoints[x].channel, timestamp: newChannelData.dataPoints[x].timestamp, x:yx, y:yy, z:yz }
@@ -242,14 +242,6 @@ const dataSlice = createSlice({
                       }
               }
                 
-                // Add new data points to the correct channel
-                // here is where I want to add the filter and sample
-                // filter first, and I neeed to calculate something for each datapoint because of how
-                // a butterworth filter works
-                //sampling is simple I just keep a universal counter and only add the data point 
-                // if counter === decimation factor. 
-              
-                // Trim excess data points
                 if (state.data[existingChannelIndex].dataPoints.length > state.dataRetentionLimit) {
                   state.data[existingChannelIndex].dataPoints = state.data[existingChannelIndex].dataPoints.slice(-state.dataRetentionLimit);
                 }
@@ -315,16 +307,14 @@ const dataSlice = createSlice({
             sum = sum + f[i]
           }
 
-          for (var j = 0; j<f.length-1; j++){
+          for (var j = 0; j<f.length; j++){
             f[j] = f[j]/sum
 
 
           }
           
           state.Filter[h] = f
-          console.log("new filter")
-          console.log(f)
-          console.log(state.frequency)
+
           }}
 
 
@@ -342,16 +332,14 @@ const dataSlice = createSlice({
             sum = sum + f[i]
           }
 
-          for (var j = 0; j<f.length-1; j++){
+          for (var j = 0; j<f.length; j++){
             f[j] = f[j]/sum
 
 
           }
           
           state.Filter[h] = f
-          console.log("new filter")
-          console.log(f)
-          console.log(state.frequency[h])
+
           }
           }
 
@@ -366,6 +354,8 @@ const dataSlice = createSlice({
           },
          
           setFilterFrequency: (state, action: PayloadAction<number[]>) =>{
+            console.log(action.payload)
+      
           state.frequency[action.payload[0]] = action.payload[1];
           }
          

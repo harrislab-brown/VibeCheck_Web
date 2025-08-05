@@ -29,7 +29,10 @@ export const strobeSlice = createSlice({
             state.detuning = !state.detuning
         },
         setDetune:(state, action: PayloadAction<number>) => {
+            const dif  =  action.payload - state.detune 
+            state.frequency = state.frequency + dif
             state.detune = action.payload;
+            
         },
         setStrobeFrequency: (state, action: PayloadAction<number>) => {
             state.frequency = action.payload;
