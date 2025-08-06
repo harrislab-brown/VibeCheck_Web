@@ -118,45 +118,19 @@ const isFiltering = useAppSelector((state: RootState) => state.data.Filtering);
 
 return(
     <div>   
-      <div>
- <ButtonGroup variant="flat" style={{margin: 20}}>
+      <div style={{display:'flex' , justifyContent:"space-around", alignItems:"center"} }>
       <Button onClick={handleClick}             
-color={isFiltering ? "danger" : "primary"} style={{width: 200}} >{labelsMap[selectedOptionValue]} </Button>
-      <Dropdown placement="bottom-end">
-        <DropdownTrigger>
-          <Button>
-            <ChevronDownIcon />
-            Choose Filter
-          </Button>
-        </DropdownTrigger>
-        <DropdownMenu
-          disallowEmptySelection
-          aria-label="Merge options"
-          className="max-w-[300px]"
-          selectedKeys={selectedOption}
-          selectionMode="single"
-          onSelectionChange={setSelectedOption}
-          // onAction={(keys) => setFilterValue(Array.from(keys)[0] as string)}
-        >
-          <DropdownItem key="lowPass" description={descriptionsMap["lowPass"]}>
-            {labelsMap["lowPass"]}
-          </DropdownItem>
-          {/* <DropdownItem key="highPass" description={descriptionsMap["highPass"]}>
-            {labelsMap["highPass"]}
-          </DropdownItem>
-          <DropdownItem key="cut" description={descriptionsMap["cut"]}>
-            {labelsMap["cut"]} 
-          </DropdownItem>
-          <DropdownItem key="band" description={descriptionsMap["band"]}>
-            {labelsMap["band"]} 
-          </DropdownItem> */}
-        </DropdownMenu>
-      </Dropdown>
-    </ButtonGroup>
-    <p>{""}</p>
+      color={isFiltering ? "danger" : "primary"} 
+      style={{width: 200}} >
+      low pass filter
+      </Button>
+
+
 </div>
       <div> 
-        <div style={{display:'flex' , justifyContent:"space-around", alignItems:"flex-start"} }>
+            <p> &nbsp; </p>
+
+        <div style={{display:'flex' , justifyContent:"space-around", alignItems:"flex-start" , width:"100"} }>
   <Input 
     errorMessage="Please enter a number"
     value={cutoff}
