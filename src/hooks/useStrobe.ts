@@ -12,13 +12,13 @@ export const useStrobe = () => {
   const isSerialConnected = useSelector((state: RootState) => state.serial.isConnected);
 
   const toggleStrobe = () => {
+        dispatch(strobeSlice.actions.toggleStrobe());
     const detuning = useAppSelector((state: RootState) => state.strobe.detuning);
     if (!detuning) {
     const wavegenFrequency = useAppSelector((state: RootState) => state.wavegen.frequency);
     const detune = useAppSelector((state: RootState) => state.strobe.detune);
     dispatch(strobeSlice.actions.setStrobeFrequency(wavegenFrequency + detune));
     }
-    dispatch(strobeSlice.actions.toggleStrobe());
 
     
   };
