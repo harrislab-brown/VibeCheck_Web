@@ -9,7 +9,7 @@ import { Switch, Input, Button, Slider,  ButtonGroup,
   SelectItem
  } from '@nextui-org/react';
 import { useAppSelector, useAppDispatch } from '../redux/hooks'
-import { toggleFiltering, setCutoff, setOrder, setSecondCutoff, setFilter } from '../features/dataSlice';
+import { toggleFiltering, setCutoff, setOrder, setSecondCutoff } from '../features/dataSlice';
 import { RootState } from '../redux/store';
 
 
@@ -45,21 +45,7 @@ const FilterComponent: React.FC = () => {
     { label: "55", value: "55" },
     { label: "60", value: "60" },
   ];
-
-    const [order, setOrderLabel] = React.useState("");
-
-    const handleOrderChange = (e) => {
-    setOrderLabel(e.target.value);
-    };
     
-
-    const  setOrderValue = (orderDispatch: string) =>{
-      dispatch(setOrder(Number(orderDispatch)))
-    }
-
-
-
-
     const [selectedOption, setSelectedOption] = React.useState(new Set(["lowPass"]));
     const [cutoff, setCutOffValue] = useState("");
     
