@@ -20,117 +20,121 @@ import FilterComponent from './FilterComponent';
 import DecimationComponent from './DecimationComponent';
 import ChartComponent from './ChartComponent';
 
-
-
-
 const Layout: React.FC = () => {
-    const [selectedKeys, setSelectedKeys] = React.useState(new Set([""]));
-    const [selectedKeys2, setSelectedKeys2] = React.useState(new Set([""]));
+    // Fix 1: Use string arrays instead of Set for NextUI Accordion
+    const [selectedKeys, setSelectedKeys] = React.useState<string[]>(["titleButton"]);
+    const [selectedKeys2, setSelectedKeys2] = React.useState<string[]>([]);
 
+    // Fix 2: Proper event handlers for NextUI Accordion
+    const handleSelectionChange = (keys: "all" | Set<React.Key>) => {
+        if (keys === "all") {
+            setSelectedKeys(["titleButton"]);
+        } else {
+            setSelectedKeys(Array.from(keys) as string[]);
+        }
+    };
 
-  return (
+    const handleSelectionChange2 = (keys: "all" | Set<React.Key>) => {
+        if (keys === "all") {
+            // Handle "all" case if needed
+            setSelectedKeys2(["connect", "save", "plot", "status", "sensors", "wavegen", "strobe", "serial", "filter", "decimation"]);
+        } else {
+            setSelectedKeys2(Array.from(keys) as string[]);
+        }
+    };
 
-    <div className = "layout">
-      <div className = "settingsContainer" >
-            <div className = "status-settings-files container">
-            
-                <div className = " max-h-screen overflow-y-auto">
-                    <div>
-
-                      {/* this is the settings title accordion. This is what lets the settings dissapear*/}
-                      <Accordion selectedKey={selectedKeys} onSelectionChange={setSelectedKeys} defaultExpandedKeys={["titleButton"]}>  
-                      {/* there is a weird red highlight here that has something to do with typescipt vs javascipt differences. apparently its fine */}
-                        <AccordionItem key="titleButton" aria-label="Title" title="Settings" classNames={{
-                              title: "text-xl font-bold", // Change font size and weight
-                                }}>
-                        </AccordionItem>
-                      </Accordion>
-
-
-                    </div>
-                    <Divider/>  
-                    {/* Render the settings accordion iff the settings accordion is open */}
-                   {selectedKeys.size != 0 && <div >  
-                              <Card
-                              className='p-5'>
-                                
-                              <Accordion selectedKey={selectedKeys2} onSelectionChange={setSelectedKeys2} selectionMode="multiple" defaultExpandedKeys={selectedKeys2}
+    return (
+        <div className="layout">
+            <div className="settingsContainer">
+                <div className="status-settings-files container">
+                    <div className="max-h-screen overflow-y-auto">
+                        <div>
+                            {/* Settings title accordion */}
+                            <Accordion 
+                                selectedKeys={selectedKeys} 
+                                onSelectionChange={handleSelectionChange}
+                                defaultExpandedKeys={["titleButton"]}
+                            >  
+                                <AccordionItem 
+                                    key="titleButton" 
+                                    aria-label="Title" 
+                                    title="Settings" 
+                                    classNames={{
+                                        title: "text-xl font-bold",
+                                    }}
                                 >
-                                  <AccordionItem key="connect" aria-label="Connect" title={"Serial Connection"}>
-                                  <SerialConnect/>
                                 </AccordionItem>
-                                <AccordionItem key="save" aria-label="Save" title={"File management"}>
-                                  <FileContainer />
-                                </AccordionItem>
-                                <AccordionItem key="plot" aria-label="Plot" title={"Plot Settings"}>
-                                  <PlotControlsComponent />
-                                </AccordionItem>
-                                <AccordionItem key="status" aria-label="Status" title={"System Status"}>
-                                  <SystemStatus />
-                                </AccordionItem>
-                                <AccordionItem key="sensors" aria-label="Sensors" title={"Sensors "}>
-                                  <Sensors />
-                                </AccordionItem>
-                                <AccordionItem key="wavegen" aria-label="Wavegen" title={"Wavegen"}>
-                                  <Wavegen/>
-                                </AccordionItem>
-                                <AccordionItem key="strobe" aria-label="Strobe" title={"Strobe"}>
-                                  <div>
-                                    <StrobeComponent/>
-                                  </div>
-                                </AccordionItem>
-                                <AccordionItem key="serial" aria-label="Serial" title={"Serial Input"}>
-                                  <SerialInput />
-                                </AccordionItem>
-                               
-                                  <AccordionItem key="filter" aria-label="Filter" title={"Digital Filters"}>
-                                    <FilterComponent/>
-                                </AccordionItem>  
-                                  <AccordionItem key="decimation" aria-label="Decimation" title={"Decimation"}>
-                                    <DecimationComponent/>
-                                </AccordionItem>  
-                                
-                              
-                                
-
-                              </Accordion>
-                              </Card>
-                            </div> }    
-                   
+                            </Accordion>
+                        </div>
+                        
+                        <Divider/>  
+                        
+                        {/* Render the settings accordion if the settings accordion is open */}
+                        {selectedKeys.length > 0 && selectedKeys.includes("titleButton") && (
+                            <div>  
+                                <Card className="p-5">
+                                    <Accordion 
+                                        selectedKeys={selectedKeys2} 
+                                        onSelectionChange={handleSelectionChange2}
+                                        selectionMode="multiple"
+                                        defaultExpandedKeys={selectedKeys2}
+                                    >
+                                        <AccordionItem key="connect" aria-label="Connect" title="Serial Connection">
+                                            <SerialConnect/>
+                                        </AccordionItem>
+                                        <AccordionItem key="save" aria-label="Save" title="File management">
+                                            <FileContainer />
+                                        </AccordionItem>
+                                        <AccordionItem key="plot" aria-label="Plot" title="Plot Settings">
+                                            <PlotControlsComponent />
+                                        </AccordionItem>
+                                        <AccordionItem key="status" aria-label="Status" title="System Status">
+                                            <SystemStatus />
+                                        </AccordionItem>
+                                        <AccordionItem key="sensors" aria-label="Sensors" title="Sensors">
+                                            <Sensors />
+                                        </AccordionItem>
+                                        <AccordionItem key="wavegen" aria-label="Wavegen" title="Wavegen">
+                                            <Wavegen/>
+                                        </AccordionItem>
+                                        <AccordionItem key="strobe" aria-label="Strobe" title="Strobe">
+                                            <div>
+                                                <StrobeComponent/>
+                                            </div>
+                                        </AccordionItem>
+                                        <AccordionItem key="serial" aria-label="Serial" title="Serial Input">
+                                            <SerialInput />
+                                        </AccordionItem>
+                                        <AccordionItem key="filter" aria-label="Filter" title="Digital Filters">
+                                            <FilterComponent/>
+                                        </AccordionItem>  
+                                        <AccordionItem key="decimation" aria-label="Decimation" title="Decimation">
+                                            <DecimationComponent/>
+                                        </AccordionItem>  
+                                    </Accordion>
+                                </Card>
+                            </div> 
+                        )}    
+                    </div>
                 </div>
-    
             </div>
-      </div>
 
-
-        {selectedKeys.size != 0 ? //checks for whether the settings accordion is showing
-        <div className = "smallContainter">
-            
-            
-            <div className="plot scrollable container">
-
-              <ChartContainer/>
-            </div>
-           
+            {/* Fix 4: Better condition checking */}
+            {selectedKeys.length > 0 && selectedKeys.includes("titleButton") ? (
+                <div className="smallContainter">
+                    <div className="plot scrollable container">
+                        <ChartContainer/>
+                    </div>
+                </div>
+            ) : (
+                <div className="bigContainter">
+                    <div className="plot scrollable container">
+                        <ChartContainer/>
+                    </div>
+                </div>
+            )}
         </div>
-        : 
-        <div className = "bigContainter">
-            
-            
-            <div className="plot scrollable container">
-
-              <ChartContainer/>
-            </div>
-           
-        </div>}
-        
-        
-        
-      
-  
-    </div>
-    
-  );
+    );
 };
 
 export default Layout;
