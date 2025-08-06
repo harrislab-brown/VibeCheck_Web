@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
 import { Switch, Input, Button, Slider } from '@nextui-org/react';
 import { useStrobe } from '../hooks/useStrobe';
+import { RootState } from '../redux/store';
+import { useAppSelector, useAppDispatch } from '../redux/hooks'
+
 
 const StrobeComponent: React.FC = () => {
-    const { isEnabled, frequency, exposure, phase, isSerialConnected, toggleStrobe, setFrequency, setExposure, setPhase } = useStrobe();
+    const [offsetValue , setOffsetValue] = React.useState(25);
+
+
+
+    const { isEnabled, frequency, exposure, phase, detune, detuning, isSerialConnected, toggleStrobe, toggleStrobeType, setDetune, setFrequency, setExposure, setPhase } = useStrobe();
 
     const [frequencyInput, setFrequencyInput] = useState(frequency.toString());
     const [exposureInput, setExposureInput] = useState(exposure.toString());
@@ -36,6 +43,9 @@ const StrobeComponent: React.FC = () => {
         <div className="p-4 bg-">
             <h2 className="text-xl font-bold mb-4">Strobe Controls</h2>
             <div className="mb-4 flex items-center">
+                 {/* Both these switches follow the same logic where clicking them toggles a state in the store, 
+                 and then you render their state based on a read store value. 
+                 This is the easiest way to have their state in the store */}
                 <Switch 
                     isSelected={isEnabled}
                     onValueChange={toggleStrobe}
@@ -45,7 +55,41 @@ const StrobeComponent: React.FC = () => {
                     {isEnabled ? 'Enabled' : 'Disabled'}
                 </span>
             </div>
+        <div >
 
+            <div className="mb-4 flex items-center">
+                <Switch 
+                    isSelected={detuning}
+                    onValueChange={toggleStrobeType}
+                />
+                <span className="ml-2">
+                    {detuning ? 'detuning' : 'custom input'}
+                </span>
+            </div>
+
+<div className="flex flex-col gap-2 w-full h-full max-w-md items-start justify-center">
+     {/* Slider to control the detune offset. Does the same thing as the switches 
+     where changing the slider changes the detune value in the store
+      and the slider is rendered based on the value in the store*/}
+      <Slider
+        className="block mb-2"
+        fillOffset={0}
+        formatOptions={{signDisplay: "always"}}
+        label="detune frequency"
+        maxValue={3}
+        minValue={-3}
+        step={1}
+        showSteps = {true}
+        size="lg"
+        value={detune}
+        onChange={(value) => setDetune(value as number)}
+        isDisabled = {!detuning} 
+      />
+      {/* the isDisabled makes the component only usable when detuning, 
+      not also when manually controlling the strobe */}
+    </div>
+            {/* these two inputs are fairly strightforward, just sending their input to the store
+            when enter is pressed or when the send button is pressed */}
             <div className="mb-4 flex items-center">
                 <Input
                     label="Frequency (Hz)"
@@ -54,12 +98,16 @@ const StrobeComponent: React.FC = () => {
                     onChange={(e) => setFrequencyInput(e.target.value)}
                     onKeyUp={(e) => handleKeyPress(e, handleFrequencySubmit)}
                     className="max-w-xs mr-2"
+                    isDisabled = {detuning}
                 />
-                <Button onClick={handleFrequencySubmit} disabled={!isEnabled || !isSerialConnected}>
+                <Button onClick={handleFrequencySubmit} 
+                disabled={!isEnabled || !isSerialConnected}
+                isDisabled = {detuning}
+                >
                     Send
                 </Button>
             </div>
-
+        </div>
             <div className="mb-4 flex items-center">
                 <Input
                     label="Exposure (0% - 100%)"
@@ -76,6 +124,7 @@ const StrobeComponent: React.FC = () => {
 
             <div className="mb-4">
                 <label className="block mb-2">Phase (-180° to 180°)</label>
+                {/* has the same logic as the earlier slider with a with visual changes */}
                 <Slider
                     aria-label="Strobe Phase"
                     step={1}

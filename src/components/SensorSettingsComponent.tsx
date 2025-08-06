@@ -9,6 +9,7 @@ import {
   SensorState
 } from '../features/sensorSlice';
 import { RootState } from '../redux/rootReducer';
+import { setFilterFrequency } from '../features/dataSlice';
 
 interface SensorSettingsProps {
   accelNumber: number;
@@ -47,10 +48,10 @@ const SensorSettings: React.FC<SensorSettingsProps> = ({ accelNumber }) => {
     { label: "104 Hz", value: "104" },
     { label: "208 Hz", value: "208" },
     { label: "416 Hz", value: "416" },
-    //{ label: "833 Hz", value: "833" },
-    //{ label: "1660 Hz", value: "1660" },
-    //{ label: "3330 Hz", value: "3330" },
-    //{ label: "6660 Hz", value: "6660" },
+    { label: "833 Hz", value: "833" },
+    { label: "1660 Hz", value: "1660" },
+    { label: "3330 Hz", value: "3330" },
+    { label: "6660 Hz", value: "6660" },
   ];
 
   if (!sensorState) {
@@ -69,6 +70,7 @@ const SensorSettings: React.FC<SensorSettingsProps> = ({ accelNumber }) => {
 
   const handleSampleRateChange = (value: string) => {
     dispatch(setSampleRate({ accelNumber, rate: value }));
+    dispatch(setFilterFrequency([accelNumber , Number(value)])) //send the sampling rate to dataslice to calculate the filter
   };
 
 
@@ -103,13 +105,15 @@ const SensorSettings: React.FC<SensorSettingsProps> = ({ accelNumber }) => {
         </Select>
       </div>
 
+
+
+
       <div className="mb-4">
         <Select
           label="Sample Rate"
           placeholder="Select a sample rate"
           selectedKeys={sampleRate ? [sampleRate] : []}
           onSelectionChange={(keys) => handleSampleRateChange(Array.from(keys)[0] as string)}
-          //isDisabled={!isEnabled}
         >
           {sampleRates.map((rate) => (
             <SelectItem key={rate.value} value={rate.value}>
@@ -118,6 +122,9 @@ const SensorSettings: React.FC<SensorSettingsProps> = ({ accelNumber }) => {
           ))}
         </Select>
       </div>
+
+
+
 
       {isEnabled && accelerationRange && sampleRate && (
         <p className="text-sm">

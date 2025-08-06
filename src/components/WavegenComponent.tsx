@@ -4,10 +4,14 @@ import { useAppSelector, useAppDispatch } from '../redux/hooks';
 import { RootState } from '../redux/rootReducer';
 import { useWavegen } from '../hooks/useWavegen';
 import { setWaveform } from '../features/wavegenSlice';
+import {setStrobeFrequency} from "../features/strobeSlice"
 
 const Wavegen: React.FC = () => {
     const dispatch = useAppDispatch();
     const isSerialConnected = useAppSelector((state: RootState) => state.serial.isConnected);
+    const detuning = useAppSelector((state: RootState) => state.strobe.detuning);
+    const detune = useAppSelector((state: RootState) => state.strobe.detune);
+
     const { isEnabled, frequency, amplitude, toggleWavegen, setFrequency, setAmplitude } = useWavegen();
 
     const [frequencyInput, setFrequencyInput] = useState(frequency.toString());
@@ -17,6 +21,7 @@ const Wavegen: React.FC = () => {
         const value = parseFloat(frequencyInput);
         if (!isNaN(value) && value > 0) {
             setFrequency(value);
+            if (detuning) {dispatch(setStrobeFrequency(value+detune))}
         } else {
             alert('Please enter a positive number for frequency.');
         }
@@ -62,7 +67,6 @@ const Wavegen: React.FC = () => {
                     <Tab key='sine' title='Sine' />
                     <Tab key='square' title='Square' />
                     <Tab key='triangle' title='Triangle' />
-                    <Tab key='sawtooth' title='Sawtooth' />
                 </Tabs>
             </div>
 

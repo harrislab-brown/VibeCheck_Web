@@ -10,7 +10,7 @@ import createSerialDataMiddleware from '../middleware/serialDataMiddleware';
 const serialService = new SerialService();
 const fileStreamService = FileStreamService.getInstance();
 
-const serialDataMiddleware = createSerialDataMiddleware(fileStreamService);
+//const serialDataMiddleware = createSerialDataMiddleware(fileStreamService);
 
 const store = configureStore({
   reducer: rootReducer,
@@ -19,7 +19,8 @@ const store = configureStore({
       thunk: {
         extraArgument: { serialService, fileStreamService },
       },
-    }).concat(serialDataMiddleware, serialOutputMiddleware),
+      SerializableStateInvariantMiddleware: false,
+    }).concat(serialOutputMiddleware),
     devTools: {
       trace: true, // Enable trace feature
       traceLimit: 25, // Limit number of stack frames (optional)

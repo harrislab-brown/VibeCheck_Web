@@ -5,6 +5,8 @@ export interface StrobeState {
     frequency: number;
     exposure: number;
     phase: number;
+    detune: number;
+    detuning: boolean;
 }
 
 const initialState: StrobeState = {
@@ -12,6 +14,8 @@ const initialState: StrobeState = {
     frequency: 61,  // Default frequency of 1 Hz
     exposure: 5,  // Default exposure of 50%
     phase: 0,      // Default phase of 0 degrees
+    detune: 0,
+    detuning: false,
 }
 
 export const strobeSlice = createSlice({
@@ -21,7 +25,17 @@ export const strobeSlice = createSlice({
         toggleStrobe: (state) => {
             state.isEnabled = !state.isEnabled;
         },
-        setFrequency: (state, action: PayloadAction<number>) => {
+        toggleStrobeType: (state) => {
+            state.detuning = !state.detuning
+        },
+        setDetune:(state, action: PayloadAction<number>) => {
+            //instead of getting wavegen frequency every time just change by the difference
+            const dif  =  action.payload - state.detune 
+            state.frequency = state.frequency + dif
+            state.detune = action.payload;
+            
+        },
+        setStrobeFrequency: (state, action: PayloadAction<number>) => {
             state.frequency = action.payload;
         },
         setExposure: (state, action: PayloadAction<number>) => {
@@ -33,6 +47,6 @@ export const strobeSlice = createSlice({
     }
 });
 
-export const { toggleStrobe, setFrequency, setExposure, setPhase } = strobeSlice.actions;
+export const { toggleStrobe, toggleStrobeType, setDetune, setStrobeFrequency, setExposure, setPhase } = strobeSlice.actions;
 
 export default strobeSlice.reducer;

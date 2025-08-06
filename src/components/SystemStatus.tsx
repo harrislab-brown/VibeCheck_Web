@@ -22,10 +22,10 @@ const SystemStatus: React.FC = () => {
       fullWidth = {true}
       className='pl-5 pr-5'
       >
-        <CardHeader className='pb-0 pt-2 px-4 flex-col items-start'>
+        {/* <CardHeader className='pb-0 pt-2 px-4 flex-col items-start'>
           System Status
-        </CardHeader>
-        <Divider/>
+        </CardHeader> */}
+       
         <CardBody className='flex items-center justify-center h-full mt-2 '>
            {statusMessage}
 

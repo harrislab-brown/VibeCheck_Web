@@ -47,18 +47,28 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
     datasets: []
   });
   const isPaused = useAppSelector(state => state.plot.isPaused);
-  const allData = useAppSelector((state: RootState) => state.data.data);
+  const data = useAppSelector((state: RootState) => state.data.data.find((d) => d.channel === channel));
+ // console.log(data)
+  
+  
+  
+  
   const plotSettings = useAppSelector(state => state.plot);
   const enabledSensorsCount = useAppSelector(state=> Object.values(state.sensor).filter(s=>s.isEnabled).length);
   const chartRef = useRef<ChartJS<"line"> | null>(null);
   const lineTension = 0.2;
 
 
+
+
   useEffect(() => {
     const updateChart = () => {
       if(isPaused) return;
 
-      const data = allData.find((d) => d.channel === channel);
+
+
+
+      //  const data = allData.find((d) => d.channel === channel);//this is picking out each datapoitn when I think its actually sorted?
       if (data) {
         const newChartData: ChartData<'line'> = {
           labels: data.dataPoints.slice(-plotSettings.windowWidth).map((_, index) => index.toString()),
@@ -93,27 +103,38 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
     const intervalId = setInterval(updateChart, updateInterval);
 
     return () => clearInterval(intervalId);
-  }, [channel, plotSettings.windowWidth, allData, updateInterval]);
+  }, [channel, plotSettings.windowWidth, data, updateInterval]);
 
   const options: ChartOptions<'line'> = {
+    
     responsive: true,
     maintainAspectRatio: false,
+    spanGaps: true,
     scales: {
+      
       y: {
         beginAtZero: false,
         min: plotSettings.autoRange ? undefined : plotSettings.yMin,
         max: plotSettings.autoRange ? undefined : plotSettings.yMax,
       },
+      x: {
+        min:0,
+        max:6600,
+      }
+      
     },
     plugins:{
+      decimation:{
+  enabled: false,
+  },
       title:{
         display: true,
         text: title,
-      }
+      },
+    
     },
-    animation: {
-      duration: 0,  // Set animation duration in milliseconds
-    },
+    
+    animation: false,
   };
   useEffect(() => {
     const chart = chartRef.current;
@@ -127,9 +148,14 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
       };
     }
   }, [chartRef]);
+
+  // const data = allData.find((d) => d.channel === channel);
+  // console.log(data.dataPoints.slice(-plotSettings.windowWidth).map((point) => point.x))
+
   return (
     <div className="chart-div" style={{ height: `${100 / enabledSensorsCount}%` }}>
-      <Line ref={chartRef} data={chartData} options={options} />
+      { <Line ref={chartRef} data={chartData} options={options} /> }
+      {/* console.log(chartData) */}
     </div>
   );
 };

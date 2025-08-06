@@ -3,19 +3,44 @@ import { useEffect } from 'react';
 import { RootState } from '../redux/store';
 import { strobeSlice } from '../features/strobeSlice';
 import { sendSerialData } from '../features/serialOutputSlice';
-import { useAppDispatch } from '../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { wavegenSlice } from '../features/wavegenSlice';
 
 export const useStrobe = () => {
   const dispatch = useAppDispatch();
   const strobeState = useSelector((state: RootState) => state.strobe);
   const isSerialConnected = useSelector((state: RootState) => state.serial.isConnected);
 
-  const toggleStrobe = () => {
+  const toggleStrobe = () => { //toggles strobe on/off
     dispatch(strobeSlice.actions.toggleStrobe());
+    const detuning = useAppSelector((state: RootState) => state.strobe.detuning);
+    if (detuning) { // also sets the proper strobe based on detune if neccesary
+    const wavegenFrequency = useAppSelector((state: RootState) => state.wavegen.frequency);
+    const detune = useAppSelector((state: RootState) => state.strobe.detune);
+    dispatch(strobeSlice.actions.setStrobeFrequency(wavegenFrequency + detune));
+    }
+
+    
   };
 
+  const toggleStrobeType = () => { //togles from manual strobe control to detune
+    dispatch(strobeSlice.actions.toggleStrobeType())
+    const detuning = useAppSelector((state: RootState) => state.strobe.detuning);
+    if (detuning){ // also sets the proper strobe based on detune if neccesary
+      const wavegenFrequency = useAppSelector((state: RootState) => state.wavegen.frequency);
+      const detune = useAppSelector((state: RootState) => state.strobe.detune);
+      dispatch(strobeSlice.actions.setStrobeFrequency(wavegenFrequency + detune));
+    }
+
+  }
+
+  const setDetune = (detune:number) => {
+    dispatch(strobeSlice.actions.setDetune(detune))
+   
+  }
+
   const setFrequency = (frequency: number) => {
-    dispatch(strobeSlice.actions.setFrequency(frequency));
+    dispatch(strobeSlice.actions.setStrobeFrequency(frequency));
   };
 
   const setExposure = (exposure: number) => {
@@ -59,8 +84,11 @@ export const useStrobe = () => {
     ...strobeState,
     isSerialConnected,
     toggleStrobe,
+    toggleStrobeType,
+    setDetune,
     setFrequency,
     setExposure,
     setPhase,
+
   };
 };

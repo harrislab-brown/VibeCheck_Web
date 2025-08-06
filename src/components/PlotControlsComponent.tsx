@@ -20,14 +20,11 @@ const PlotControlsComponent: React.FC = () => {
 
   return (
     <Card className='w-full h-full pl-5 pr-5'>
-      <CardHeader>
-        Plot Settings
-      </CardHeader>
-      <Divider/>
+  
         <div className='plotControlsParent'>
       <div className='container1'>
         <Input 
-          label = "Window Width"
+          label = "Window Width (0-200)"
           type="number" 
           value={plotSettings.windowWidth.toString()} 
           onChange={(e) => handleChange('windowWidth', Number(e.target.value))} 

@@ -3,7 +3,7 @@
 .plot.scrollable.container {
     display: flex;
     flex-direction: column;
-    height: 65vh; /* Adjust this value as needed */
+    height: 85%; /* Adjust this value as needed */
     width: 100%;
     overflow: hidden; /* Changed from overflow-y: auto */
   }

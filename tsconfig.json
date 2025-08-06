@@ -16,9 +16,10 @@
     "jsx": "react-jsx",
     "outDir": "./dist",
     "rootDir": "./src",
-    "noEmit": false
+    "noEmit": false,
+    "checkJs": true
   },
-  "include": ["src"],
+  "include": ["src", "src/fili.min.js"],
   "exclude": [
     "node_modules",
     "**/*.spec.ts"
