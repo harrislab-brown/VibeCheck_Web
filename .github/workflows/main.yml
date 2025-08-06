@@ -25,8 +25,47 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+      
+      # Comprehensive debugging
+      - name: Debug build output
+        run: |
+          echo "=== Current directory ==="
+          pwd
+          ls -la
+          
+          echo "=== Checking for dist directory ==="
+          if [ -d "./dist" ]; then
+            echo "✅ ./dist exists"
+            echo "Contents of ./dist:"
+            ls -la ./dist
+            
+            echo "=== File count and sizes ==="
+            echo "Total files in dist:"
+            find ./dist -type f | wc -l
+            echo "Total size of dist:"
+            du -sh ./dist
+            echo "Largest files in dist:"
+            find ./dist -type f -exec ls -lh {} + | sort -k5 -hr | head -10
+            
+            echo "=== Checking for problematic files ==="
+            echo "Symlinks:"
+            find ./dist -type l | head -5 || echo "No symlinks found"
+            echo "Hard links:"
+            find ./dist -links +1 -type f | head -5 || echo "No hard links found"
+            echo "Very large files (>100MB):"
+            find ./dist -type f -size +100M | head -5 || echo "No large files found"
+            
+            echo "=== File types ==="
+            find ./dist -type f | sed 's/.*\.//' | sort | uniq -c | sort -nr | head -10
+          else
+            echo "❌ ./dist does not exist"
+            echo "Available directories:"
+            ls -la | grep "^d"
+          fi
+      
       - name: Setup Pages
         uses: actions/configure-pages@v4
+        
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
