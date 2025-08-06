@@ -63,6 +63,8 @@ if ('serial' in navigator) {
 This app is based on Vite + React + Redux. The folder heirarchy for this project is meant to be descriptive of the function of each file that makes up the app.
 
 ```
+UPDATE:: THIS IS NO LONGER CORRECT WITH NEW APP STRUCTURE
+
 vibecheck_web/
 ├── src/
 │   ├── components/
