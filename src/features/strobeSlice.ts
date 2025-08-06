@@ -29,6 +29,7 @@ export const strobeSlice = createSlice({
             state.detuning = !state.detuning
         },
         setDetune:(state, action: PayloadAction<number>) => {
+            //instead of getting wavegen frequency every time just change by the difference
             const dif  =  action.payload - state.detune 
             state.frequency = state.frequency + dif
             state.detune = action.payload;

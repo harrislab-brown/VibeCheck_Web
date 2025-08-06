@@ -11,10 +11,10 @@ export const useStrobe = () => {
   const strobeState = useSelector((state: RootState) => state.strobe);
   const isSerialConnected = useSelector((state: RootState) => state.serial.isConnected);
 
-  const toggleStrobe = () => {
-        dispatch(strobeSlice.actions.toggleStrobe());
+  const toggleStrobe = () => { //toggles strobe on/off
+    dispatch(strobeSlice.actions.toggleStrobe());
     const detuning = useAppSelector((state: RootState) => state.strobe.detuning);
-    if (!detuning) {
+    if (detuning) { // also sets the proper strobe based on detune if neccesary
     const wavegenFrequency = useAppSelector((state: RootState) => state.wavegen.frequency);
     const detune = useAppSelector((state: RootState) => state.strobe.detune);
     dispatch(strobeSlice.actions.setStrobeFrequency(wavegenFrequency + detune));
@@ -23,10 +23,10 @@ export const useStrobe = () => {
     
   };
 
-  const toggleStrobeType = () => {
+  const toggleStrobeType = () => { //togles from manual strobe control to detune
     dispatch(strobeSlice.actions.toggleStrobeType())
     const detuning = useAppSelector((state: RootState) => state.strobe.detuning);
-    if (detuning){
+    if (detuning){ // also sets the proper strobe based on detune if neccesary
       const wavegenFrequency = useAppSelector((state: RootState) => state.wavegen.frequency);
       const detune = useAppSelector((state: RootState) => state.strobe.detune);
       dispatch(strobeSlice.actions.setStrobeFrequency(wavegenFrequency + detune));

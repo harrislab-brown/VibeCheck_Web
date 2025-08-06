@@ -43,6 +43,9 @@ const StrobeComponent: React.FC = () => {
         <div className="p-4 bg-">
             <h2 className="text-xl font-bold mb-4">Strobe Controls</h2>
             <div className="mb-4 flex items-center">
+                 {/* Both these switches follow the same logic where clicking them toggles a state in the store, 
+                 and then you render their state based on a read store value. 
+                 This is the easiest way to have their state in the store */}
                 <Switch 
                     isSelected={isEnabled}
                     onValueChange={toggleStrobe}
@@ -65,6 +68,9 @@ const StrobeComponent: React.FC = () => {
             </div>
 
 <div className="flex flex-col gap-2 w-full h-full max-w-md items-start justify-center">
+     {/* Slider to control the detune offset. Does the same thing as the switches 
+     where changing the slider changes the detune value in the store
+      and the slider is rendered based on the value in the store*/}
       <Slider
         className="block mb-2"
         fillOffset={0}
@@ -73,13 +79,17 @@ const StrobeComponent: React.FC = () => {
         maxValue={3}
         minValue={-3}
         step={1}
+        showSteps = {true}
         size="lg"
         value={detune}
         onChange={(value) => setDetune(value as number)}
-        isDisabled = {!detuning}
+        isDisabled = {!detuning} 
       />
+      {/* the isDisabled makes the component only usable when detuning, 
+      not also when manually controlling the strobe */}
     </div>
-            
+            {/* these two inputs are fairly strightforward, just sending their input to the store
+            when enter is pressed or when the send button is pressed */}
             <div className="mb-4 flex items-center">
                 <Input
                     label="Frequency (Hz)"
@@ -114,6 +124,7 @@ const StrobeComponent: React.FC = () => {
 
             <div className="mb-4">
                 <label className="block mb-2">Phase (-180° to 180°)</label>
+                {/* has the same logic as the earlier slider with a with visual changes */}
                 <Slider
                     aria-label="Strobe Phase"
                     step={1}

@@ -70,7 +70,7 @@ const SensorSettings: React.FC<SensorSettingsProps> = ({ accelNumber }) => {
 
   const handleSampleRateChange = (value: string) => {
     dispatch(setSampleRate({ accelNumber, rate: value }));
-    dispatch(setFilterFrequency([accelNumber , Number(value)]))
+    dispatch(setFilterFrequency([accelNumber , Number(value)])) //send the sampling rate to dataslice to calculate the filter
   };
 
 

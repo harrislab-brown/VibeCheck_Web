@@ -36,17 +36,21 @@ const Layout: React.FC = () => {
             
                 <div className = " max-h-screen overflow-y-auto">
                     <div>
+
+                      {/* this is the settings title accordion. This is what lets the settings dissapear*/}
                       <Accordion selectedKey={selectedKeys} onSelectionChange={setSelectedKeys} defaultExpandedKeys={["titleButton"]}>  
-                      {/* there is a weird red highlight here that has something to do with typescipt vs javascipt differences. idk apparently its fine */}
+                      {/* there is a weird red highlight here that has something to do with typescipt vs javascipt differences. apparently its fine */}
                         <AccordionItem key="titleButton" aria-label="Title" title="Settings" classNames={{
                               title: "text-xl font-bold", // Change font size and weight
                                 }}>
                         </AccordionItem>
                       </Accordion>
 
+
                     </div>
                     <Divider/>  
-                   {selectedKeys.size != 0 && <div >
+                    {/* Render the settings accordion iff the settings accordion is open */}
+                   {selectedKeys.size != 0 && <div >  
                               <Card
                               className='p-5'>
                                 
@@ -99,7 +103,8 @@ const Layout: React.FC = () => {
       </div>
 
 
-        {selectedKeys.size != 0 ? <div className = "smallContainter">
+        {selectedKeys.size != 0 ? //checks for whether the settings accordion is showing
+        <div className = "smallContainter">
             
             
             <div className="plot scrollable container">
@@ -107,7 +112,9 @@ const Layout: React.FC = () => {
               <ChartContainer/>
             </div>
            
-        </div>: <div className = "bigContainter">
+        </div>
+        : 
+        <div className = "bigContainter">
             
             
             <div className="plot scrollable container">
