@@ -38,14 +38,14 @@ const setFilter = (frequency: number[], cutoff: number, order: number): number[]
   return (filters)
 }
 
-const getFilteredDatapoint = (filter: number[], buffer: BufferData[], channel: number, timestamp:number): DataPoint => {
+const getFilteredDatapoint = (filter: number[][], buffer: BufferData[], channel: number, timestamp: number): DataPoint => {
   var yx = 0
   var yy = 0
   var yz = 0
   for (let h = 0; h < filter.length; h++) {
-    yx = yx + (filter[h]) * (buffer[channel].data[filter.length - h].x)
-    yy = yy + (filter[h]) * (buffer[channel].data[filter.length - h].y)
-    yz = yz + (filter[h]) * (buffer[channel].data[filter.length - h].z)
+    yx = yx + (filter[channel][h]) * (buffer[channel].data[filter.length - h].x)
+    yy = yy + (filter[channel][h]) * (buffer[channel].data[filter.length - h].y)
+    yz = yz + (filter[channel][h]) * (buffer[channel].data[filter.length - h].z)
 
   }
   const filteredDatapoint: DataPoint = { channel: channel, timestamp: timestamp, x: yx, y: yy, z: yz }
@@ -229,22 +229,8 @@ const dataSlice = createSlice({
               state.DecimationCounter = state.DecimationCounter + 1
               if (state.DecimationCounter === state.SamplingFactor) { //if decimating only do something every n datapoints
                 state.DecimationCounter = 0
-
-
-                var yx = 0
-                var yy = 0
-                var yz = 0
-                for (let h = 0; h < state.Filter[newChannelData.channel].length; h++) {
-                  console.log(newChannelData.channel)
-                  yx = yx + (state.Filter[newChannelData.channel][h]) * (state.Buffer[newChannelData.channel].data[state.Filter[newChannelData.channel].length - h].x) // I think these indeces are correct
-                  yy = yy + (state.Filter[newChannelData.channel][h]) * (state.Buffer[newChannelData.channel].data[state.Filter[newChannelData.channel].length - h].y)
-                  yz = yz + (state.Filter[newChannelData.channel][h]) * (state.Buffer[newChannelData.channel].data[state.Filter[newChannelData.channel].length - h].z)
-
-                }
-                var filteredDatapoint: DataPoint = { channel: newChannelData.dataPoints[x].channel, timestamp: newChannelData.dataPoints[x].timestamp, x: yx, y: yy, z: yz }
-                const channel = newChannelData.channel
-                 //state.data[existingChannelIndex].dataPoints.push(getFilteredDatapoint(state.Filter[channel] , state.Buffer, ));
-                //implement the function
+                const filteredDatapoint = getFilteredDatapoint(state.Filter, state.Buffer, newChannelData.channel, newChannelData.dataPoints[x].timestamp)
+                state.data[existingChannelIndex].dataPoints.push(filteredDatapoint);
                 if (fileStreamService.getIsRecording()) {
                   console.log('recorded')
                   const channelData: ChannelData = { channel: newChannelData.dataPoints[x].channel, dataPoints: [filteredDatapoint] }
@@ -261,17 +247,7 @@ const dataSlice = createSlice({
 
               //here goes a check for whether that sensor is being filtered atm  if()
 
-              var yx = 0
-              var yy = 0
-              var yz = 0
-              for (let h = 0; h < state.Filter[newChannelData.channel].length; h++) {
-
-                yx = yx + (state.Filter[newChannelData.channel][h]) * (state.Buffer[newChannelData.channel].data[state.Filter[newChannelData.channel].length - h].x) // I think these indeces are correct
-                yy = yy + (state.Filter[newChannelData.channel][h]) * (state.Buffer[newChannelData.channel].data[state.Filter[newChannelData.channel].length - h].y)
-                yz = yz + (state.Filter[newChannelData.channel][h]) * (state.Buffer[newChannelData.channel].data[state.Filter[newChannelData.channel].length - h].z)
-
-              }
-              var filteredDatapoint: DataPoint = { channel: newChannelData.dataPoints[x].channel, timestamp: newChannelData.dataPoints[x].timestamp, x: yx, y: yy, z: yz }
+              const filteredDatapoint = getFilteredDatapoint(state.Filter, state.Buffer, newChannelData.channel, newChannelData.dataPoints[x].timestamp)
               state.data[existingChannelIndex].dataPoints.push(filteredDatapoint);
               if (fileStreamService.getIsRecording()) {
                 console.log('recorded')
