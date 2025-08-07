@@ -18,6 +18,7 @@ import { useAppSelector } from '../redux/hooks';
 
 import '../styles/Chart.css'
 import { RootState } from '../redux/store';
+import { time } from 'console';
 
 ChartJS.register(
   CategoryScale,
@@ -48,10 +49,11 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
   });
   const isPaused = useAppSelector(state => state.plot.isPaused);
   const data = useAppSelector((state: RootState) => state.data.data.find((d) => d.channel === channel));
- // console.log(data)
-  
-  
-  
+  const frequencies = useAppSelector(state => state.data.frequency);
+  const frequency = frequencies[channel]
+  var timeLabel = (1/frequency).toString()
+  timeLabel = timeLabel.slice(0,7)
+  timeLabel = timeLabel.concat(" s")
   
   const plotSettings = useAppSelector(state => state.plot);
   const enabledSensorsCount = useAppSelector(state=> Object.values(state.sensor).filter(s=>s.isEnabled).length);
@@ -118,15 +120,23 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
         max: plotSettings.autoRange ? undefined : plotSettings.yMax,
         title: {
           text: "g",
-          display: true
+          display: true,
+          color: "white",
+          font: {
+            size:20
+          }
         }
       },
       x: {
         min:0,
         max:6600,
         title:{
-          text: "time" ,
-          display:true
+          text: timeLabel ,
+          display:true, 
+          color: "white",
+          font: {
+            size:20
+          }
         }
       }
       
