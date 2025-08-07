@@ -5,7 +5,6 @@ import rootReducer from './rootReducer';
 import { SerialService } from '../services/SerialService';
 import serialOutputMiddleware from '../middleware/serialOutputMiddleware';
 import { FileStreamService } from '../services/FileStreamService';
-import createSerialDataMiddleware from '../middleware/serialDataMiddleware';
 
 const serialService = new SerialService();
 const fileStreamService = FileStreamService.getInstance();

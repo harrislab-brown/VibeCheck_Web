@@ -7,7 +7,6 @@ import { setStatusMessage } from '../features/systemStatusSlice';
 import { receiveData } from '../features/dataSlice';
 import { FileStreamService } from '../services/FileStreamService';
 import { RootState } from '../redux/rootReducer';
-import { dataBuffer } from '../utils/dataBuffer';
 import { useAppSelector } from '../redux/hooks';
 
 // Define the action type
@@ -137,7 +136,7 @@ export class SerialService { //this class interacts directly with vibecheck thro
 
           
           const concatMessage = completeMessage.replace("data 10", '');
-          if (this.allData.length<2*929){
+          if (this.allData.length<2*929){ //change this to be based on the sum of all the sample rates
             this.allData = this.allData.concat(concatMessage);
           }
           else{
@@ -153,13 +152,6 @@ export class SerialService { //this class interacts directly with vibecheck thro
                 const channelData = parsedMessage.data as ChannelData[];
 
                  store.dispatch(receiveData(channelData));
-                //     if (this.fileStreamService.getIsRecording()) { 
-                //     const csvData = convertToCSV(channelData);
-                //     this.fileStreamService.writeToFile(csvData).catch(error => {// writes to the csv file
-                //     console.error('Error writing to file:', error);
-                //     store.dispatch(setStatusMessage(`Error writing to file: ${error.message}`));
-                //   });
-                // }
               }
               break;
             case 'event':
