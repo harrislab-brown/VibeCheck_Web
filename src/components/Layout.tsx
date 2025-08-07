@@ -10,15 +10,12 @@ import ChartContainer from './ChartContainer';
 import PlotControlsComponent from './PlotControlsComponent';
 import { Divider, Switch } from '@nextui-org/react';
 import {Card, CardHeader, Button, Spacer,  Accordion, AccordionItem} from "@nextui-org/react";
-import Settings from './SettingsCard';
-import { useState } from 'react';
 import SerialInput from './SerialInput';
 import Wavegen from './WavegenComponent';
 import StrobeComponent from './StrobeComponent';
 import Sensors from "./SensorsComponent";
 import FilterComponent from './FilterComponent';
 import DecimationComponent from './DecimationComponent';
-import ChartComponent from './ChartComponent';
 
 const Layout: React.FC = () => {
     // Fix 1: Use string arrays instead of Set for NextUI Accordion
@@ -119,7 +116,7 @@ const Layout: React.FC = () => {
                 </div>
             </div>
 
-            {/* Fix 4: Better condition checking */}
+            {/* Fix 4: Better condition checking (check if title settings accordion is open) */}
             {selectedKeys.length > 0 && selectedKeys.includes("titleButton") ? (
                 <div className="smallContainter">
                     <div className="plot scrollable container">

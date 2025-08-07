@@ -21,13 +21,13 @@ The VibeCheck_Web relies on the WebSerial API for communication with hardware de
 
 ## Incompatible Browsers
 
-- Mozilla Firefox: No support (as of October 2024)
-- Safari: No support (as of October 2024)
+- Mozilla Firefox: No support (as of August 2025)
+- Safari: No support (as of August 2025)
 - Internet Explorer: No support
 
 ## Mobile Browsers
 
-The WebSerial API is primarily designed for desktop use. As of October 2024:
+The WebSerial API is primarily designed for desktop use. As of August 2025:
 
 - No mobile browsers officially support the WebSerial API
 - Chrome for Android may have experimental support, but it's not reliable for production use
@@ -56,45 +56,129 @@ if ('serial' in navigator) {
   console.log('This browser does not support WebSerial');
 }
 ```
+# User Guide
 
+### Connecting To VibeCheck Hardware
+
+- Connect your VibeCheck to a computer with a USB-C cable
+- Use the light blue Connect button under Serial Connection to open a serial port
+- Attach a sensor board to your VibeCheck with a JST cable
+- Enable a sensor from the Sensors dropdown 
+- Set the desired measurement range and sample rate
+You should not see your data in the live plot
+
+### Saving your data to a local csv file
+
+- Select a folder to save data using the Select Save Location button in the File Management 
+- Begin saving data using the Start Recording button
+- What you see on the graph is what is saved
+- After saving a large amount of data you may need to wait a moment for your file to be ready
+
+### Control your plot
+
+- Window width controls the number of datapoints shown on the screen (Max 1000)
+- Use auto range for the graph height to fill the space, or set manual bounds
+- Click on the colorful boxes above the graph to turn on/off that portion of the graph
+
+### Processing your data
+
+- Turn on a lowpass filter under digital filters, the default has a cutoff frequency of 200 Hz
+- Change the cutoff frequency with the input box
+- Turn on decimation to sample the data (automatically turns on the filter to avoid aliasing)
+- Turn down the order (quality) of the filter with the order input box (only recommended if the filter is causing a large delay)
+
+### Sending Serial Commands
+
+- You can send serial commands to the VibeCheck Hardware using the serial input box
+
+### Using the Wavegen feature of the VibeCheck Hardware
+
+- Plug an amplifier into a speaker
+- Plug a headphone cable from the VibeCheck's port to the amplifier
+- Turn on the waveForm geneterator under Wavegen
+- Choose the Shape of your wave
+- Choose desired Frequency and Amplitude of your wave
+- Adjust the amplifier's volume to control the wave being generated
+
+### Using the Strobe feature of the VibeCheck Hardware
+
+- Place the VibeCheck near the speaker
+- Turn on Strobe Controls
+- Choose custom frequency or set set a constent offset from the wavegen frequency 
+- Choose desired exposure and phase offset
+
+
+### Tips
+
+- Click the big settings title to collapse the settings bar and let the graph fill your screen
+- Important messages such as browser compatabilty upon startup will be in system status
+- Always press Enter after typing in an input box
+- Set wavegen and strobe frequency to the same value and  with the phase slider
 
 # Developer Guide
 
 This app is based on Vite + React + Redux. The folder heirarchy for this project is meant to be descriptive of the function of each file that makes up the app.
 
 ```
-UPDATE:: THIS IS NO LONGER CORRECT WITH NEW APP STRUCTURE
 
 vibecheck_web/
 ├── src/
 │   ├── components/
+│   │   ├── ChartComponent.tsx
+│   │   ├── ChartContainer.tsx
+│   │   ├── FileContainer.tsx
+│   │   ├── FilterComponent.tsx
 │   │   ├── Layout.tsx
 │   │   ├── Logo.tsx
+│   │   ├── PlotControlsComponent.tsx
+│   │   ├── SensorSettingsComponent.tsx
 │   │   ├── SerialConnect.tsx
+│   │   ├── SerialInput.tsx
+│   │   ├── SettingsAccordion.tsx
+│   │   ├── StrobeComponent.tsx
 │   │   └── SystemStatus.tsx
+│   │   ├── WavegenComponent.tsx
 │   ├── features/
+│   │   ├── dataSlice.ts
+│   │   ├── fileSlice.ts
+│   │   ├── plotSlice.ts
+│   │   ├── sensorSlice.ts
+│   │   ├── serialOutputSlice.ts
 │   │   ├── serialSlice.ts
-│   │   └── systemStatusSlice.ts
+│   │   ├── strobeSlice.ts
+│   │   ├── systemStatusSlice.ts
+│   │   └── wavegenSlice.ts
+│   ├── hooks/
+│   │   ├── useSensor.ts
+│   │   ├── useStrobe.ts
+│   │   └── useWavegen.ts
 │   ├── middleware/
-│   │   └── serialDataMiddleware.ts
+│   │   └── serialOutputMiddleware.ts
+│   ├── public/
+│   │   ├── VibeCheck_logo.png
+│   │   ├── VibeCheck_Web_example.png
 │   ├── redux/
 │   │   ├── hooks.ts
 │   │   ├── rootReducer.ts
 │   │   └── store.ts
 │   ├── services/
+│   │   ├──DataProcessingService.ts
+│   │   ├── FileStreamService.ts
 │   │   └── SerialService.ts
 │   ├── styles/
-│   │   ├── App.css
+│   │   ├── Chart.css
+│   │   ├── ChartContainer.css
 │   │   ├── index.css
 │   │   ├── Layout.css
-│   │   └── SerialConnect.css
+│   │   ├── Logo.css
+│   │   ├── PlotControls
+│   │   ├── SerialConnect.css
+│   │   └── SystemStatus.css
 │   ├── types/
 │   │   └── index.ts
 │   ├── utils/
 │   │   ├── appInitialization.ts
 │   │   └── dataParser.ts
-│   ├── assets/
-│   │   └── VibeCheck_Logo.png
 │   ├── App.tsx
 │   ├── main.tsx
 │   └── vite-env.d.ts

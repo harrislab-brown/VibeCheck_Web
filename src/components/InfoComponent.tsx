@@ -10,7 +10,7 @@ const InfoComponent: React.FC = () => {
             <h2 >To use: </h2>
             <ul>
                 <li>  - Connect your VibeCheck to our computer with a USB-C cable</li>
-                <li>  - Use the <b>Connect</b> button to open a serial port</li>
+                <li>  - Use the <b>Connect</b> button under Serial Connection to open a serial port</li>
                 <li>  - Attach a sensor board to your VibeCheck with a JST cable</li>
                 <li>  - Enable a sensor from the <b>Sensors</b> dropdown</li>
                 <li>  - Set the desired measurement range and sample rate</li>
