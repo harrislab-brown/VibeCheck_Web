@@ -116,10 +116,18 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
         beginAtZero: false,
         min: plotSettings.autoRange ? undefined : plotSettings.yMin,
         max: plotSettings.autoRange ? undefined : plotSettings.yMax,
+        title: {
+          text: "g",
+          display: true
+        }
       },
       x: {
         min:0,
         max:6600,
+        title:{
+          text: "time" ,
+          display:true
+        }
       }
       
     },
@@ -149,9 +157,7 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
     }
   }, [chartRef]);
 
-  // const data = allData.find((d) => d.channel === channel);
-  // console.log(data.dataPoints.slice(-plotSettings.windowWidth).map((point) => point.x))
-
+ 
   return (
     <div className="chart-div" style={{ height: `${100 / enabledSensorsCount}%` }}>
       { <Line ref={chartRef} data={chartData} options={options} /> }
