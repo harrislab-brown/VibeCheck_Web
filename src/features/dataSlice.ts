@@ -42,10 +42,10 @@ const getFilteredDatapoint = (filter: number[][], buffer: BufferData[], channel:
   var yx = 0
   var yy = 0
   var yz = 0
-  for (let h = 0; h < filter.length; h++) {
-    yx = yx + (filter[channel][h]) * (buffer[channel].data[filter.length - h].x)
-    yy = yy + (filter[channel][h]) * (buffer[channel].data[filter.length - h].y)
-    yz = yz + (filter[channel][h]) * (buffer[channel].data[filter.length - h].z)
+  for (let h = 0; h < filter[channel].length; h++) {
+    yx = yx + (filter[channel][h]) * (buffer[channel].data[buffer[channel].data.length - h - 1].x)
+    yy = yy + (filter[channel][h]) * (buffer[channel].data[buffer[channel].data.length - h - 1].y)
+    yz = yz + (filter[channel][h]) * (buffer[channel].data[buffer[channel].data.length - h - 1].z)
 
   }
   const filteredDatapoint: DataPoint = { channel: channel, timestamp: timestamp, x: yx, y: yy, z: yz }
