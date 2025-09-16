@@ -136,7 +136,7 @@ if ('serial' in navigator) {
 
 - Click the big settings title to collapse the settings bar and let the graph fill your screen
 <p align="center">
-  <img src="./src/public/CollapseSettings.png" width="150">
+  <img src="./src/public/CollapseSettings.png" width="500">
 </p>
 
 - Important messages such as browser compatabilty upon startup will be in system status
