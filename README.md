@@ -63,14 +63,14 @@ if ('serial' in navigator) {
 - Connect your VibeCheck to a computer with a USB-C cable
 - Use the light blue Connect button under Serial Connection to open a serial port
 <p align="center">
-  <img src="./src/public/ConnectButton.png" width="48">
+  <img src="./src/public/ConnectButton.png" width="150">
 </p>
 
 - Attach a sensor board to your VibeCheck with a JST cable
 - Enable a sensor from the Sensors dropdown 
 - Set the desired measurement range and sample rate
 <p align="center">
-  <img src="./src/public/SensorDropdown.png" width="48">
+  <img src="./src/public/SensorDropdown.png" width="150">
 </p>
 
 ### Saving your data to a local csv file
@@ -81,7 +81,7 @@ if ('serial' in navigator) {
 - After saving a large amount of data you may need to wait a moment for your file to be ready
 
 <p align="center">
-  <img src="./src/public/FileManagement.png" width="48">
+  <img src="./src/public/FileManagement.png" width="150">
 </p>
 
 ### Control your plot
@@ -90,7 +90,7 @@ if ('serial' in navigator) {
 - Use auto range for the graph height to fill the space, or set manual bounds
 - Click on the colorful boxes above the graph to turn on/off that portion of the graph
 <p align="center">
-  <img src="./src/public/PlotSettings.png" width="48">
+  <img src="./src/public/PlotSettings.png" width="150">
 </p>
 
 ### Processing your data
@@ -101,7 +101,7 @@ if ('serial' in navigator) {
 - Turn down the order (quality) of the filter with the order input box (only recommended if the filter is causing a large delay)
 
 <p align="center">
-  <img src="./src/public/DataProcessing.png" width="48">
+  <img src="./src/public/DataProcessing.png" width="150">
 </p>
 
 ### Sending Serial Commands
@@ -118,7 +118,7 @@ if ('serial' in navigator) {
 - Adjust the amplifier's volume to control the wave being generated
 
 <p align="center">
-  <img src="./src/public/Wavegen.png " width="48" >
+  <img src="./src/public/Wavegen.png " width="150" >
 </p>
 
 ### Using the Strobe feature of the VibeCheck Hardware
@@ -129,14 +129,14 @@ if ('serial' in navigator) {
 - Choose desired exposure and phase offset
 
 <p align="center">
-  <img src="./src/public/Strobe.png" width="48">
+  <img src="./src/public/Strobe.png" width="150">
 </p>
 
 ### Tips
 
 - Click the big settings title to collapse the settings bar and let the graph fill your screen
 <p align="center">
-  <img src="./src/public/CollapseSettings.png" width="48">
+  <img src="./src/public/CollapseSettings.png" width="150">
 </p>
 
 - Important messages such as browser compatabilty upon startup will be in system status
