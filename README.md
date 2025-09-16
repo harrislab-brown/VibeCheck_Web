@@ -62,10 +62,16 @@ if ('serial' in navigator) {
 
 - Connect your VibeCheck to a computer with a USB-C cable
 - Use the light blue Connect button under Serial Connection to open a serial port
+<p align="center">
+  <img src="./src/public/ConnectButton.png" >
+</p>
+
 - Attach a sensor board to your VibeCheck with a JST cable
 - Enable a sensor from the Sensors dropdown 
 - Set the desired measurement range and sample rate
-You should not see your data in the live plot
+<p align="center">
+  <img src="./src/public/SensorDropdown.png" >
+</p>
 
 ### Saving your data to a local csv file
 
@@ -74,11 +80,18 @@ You should not see your data in the live plot
 - What you see on the graph is what is saved
 - After saving a large amount of data you may need to wait a moment for your file to be ready
 
+<p align="center">
+  <img src="./src/public/FileManagement.png" >
+</p>
+
 ### Control your plot
 
 - Window width controls the number of datapoints shown on the screen (Max 1000)
 - Use auto range for the graph height to fill the space, or set manual bounds
 - Click on the colorful boxes above the graph to turn on/off that portion of the graph
+<p align="center">
+  <img src="./src/public/PlotSettings.png" >
+</p>
 
 ### Processing your data
 
@@ -86,6 +99,10 @@ You should not see your data in the live plot
 - Change the cutoff frequency with the input box
 - Turn on decimation to sample the data (automatically turns on the filter to avoid aliasing)
 - Turn down the order (quality) of the filter with the order input box (only recommended if the filter is causing a large delay)
+
+<p align="center">
+  <img src="./src/public/DataProcessing.png" >
+</p>
 
 ### Sending Serial Commands
 
@@ -100,6 +117,10 @@ You should not see your data in the live plot
 - Choose desired Frequency and Amplitude of your wave
 - Adjust the amplifier's volume to control the wave being generated
 
+<p align="center">
+  <img src="./src/public/Wavegen.png" >
+</p>
+
 ### Using the Strobe feature of the VibeCheck Hardware
 
 - Place the VibeCheck near the speaker
@@ -107,13 +128,21 @@ You should not see your data in the live plot
 - Choose custom frequency or set set a constent offset from the wavegen frequency 
 - Choose desired exposure and phase offset
 
+<p align="center">
+  <img src="./src/public/Strobe.png" >
+</p>
 
 ### Tips
 
 - Click the big settings title to collapse the settings bar and let the graph fill your screen
+<p align="center">
+  <img src="./src/public/CollapseSettings.png" >
+</p>
+
 - Important messages such as browser compatabilty upon startup will be in system status
 - Always press Enter after typing in an input box
-- Set wavegen and strobe frequency to the same value and  with the phase slider
+- Set wavegen and strobe frequency to the same value and mess with the phase slider
+
 
 # Developer Guide
 
