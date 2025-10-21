@@ -26,8 +26,9 @@ const ChartContainer: React.FC = () => {
         <div className="chart-container">
           {enabledSensors.map((channel) => (
             <ChartComponent 
-              key={channel} 
-              channel={channel*2} 
+              key={channel}
+              sensorNumber={channel} 
+              channelNumber={channel*2} 
               title={`Sensor ${channel}`} 
               updateInterval={1}
             />

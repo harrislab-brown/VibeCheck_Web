@@ -81,7 +81,7 @@ const SensorSettings: React.FC<SensorSettingsProps> = ({ accelNumber }) => {
       <div className="mb-4 flex items-center">
         <Switch 
           isSelected={isEnabled}
-          onChange={() => dispatch(handleToggle)}
+          onChange={handleToggle}
           isDisabled = {!isSerialConnected}
         />
         <span className="ml-2">

@@ -31,13 +31,15 @@ ChartJS.register(
 );
 
 interface ChartComponentProps {
-  channel: number;
+  sensorNumber: number;
+  channelNumber: number;
   title: string;
   updateInterval: number;
 }
 
-const ChartComponent: React.FC<ChartComponentProps> = ({  
-  channel,
+const ChartComponent: React.FC<ChartComponentProps> = ({
+  sensorNumber,
+  channelNumber,
   title,
   updateInterval
 
@@ -48,9 +50,9 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
     datasets: []
   });
   const isPaused = useAppSelector(state => state.plot.isPaused);
-  const data = useAppSelector((state: RootState) => state.data.data.find((d) => d.channel === channel));
+  const data = useAppSelector((state: RootState) => state.data.data.find((d) => d.channel === channelNumber));
   const frequencies = useAppSelector(state => state.data.frequency);
-  const frequency = frequencies[channel]
+  const frequency = frequencies[sensorNumber]
   var timeLabel = (1/frequency).toString()
   timeLabel = timeLabel.slice(0,7)
   timeLabel = timeLabel.concat(" s")
@@ -105,7 +107,7 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
     const intervalId = setInterval(updateChart, updateInterval);
 
     return () => clearInterval(intervalId);
-  }, [channel, plotSettings.windowWidth, data, updateInterval]);
+  }, [channelNumber, plotSettings.windowWidth, data, updateInterval]);
 
   const options: ChartOptions<'line'> = {
     
