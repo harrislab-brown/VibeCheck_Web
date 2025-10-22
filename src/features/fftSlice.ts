@@ -35,13 +35,13 @@ const initialState: FFTSettings = {
   minFrequency: 0,
   maxFrequency: 25, // Will be dynamically updated to floor(sampleRate/2)
   averaging: 'exponential',
-  averagingFactor: 0.8,
+  averagingFactor: 0.2,
   scaleType: 'logarithmic',
-  selectedSensors: [0, 1, 2],
-  peakDetection: true,
-  peakThreshold: 0.1, // 10% of max magnitude
+  selectedSensors: [0],
+  peakDetection: false,
+  peakThreshold: 0.30, // 30% of max magnitude
   peakMinDistance: 5, // 5 Hz minimum separation
-  peakMaxCount: 5, // Show up to 5 peaks
+  peakMaxCount: 3, // Show up to 3 peaks
 };
 
 const fftSlice = createSlice({

@@ -2,13 +2,6 @@ import React, { useEffect }from 'react';
 import { Switch, Select, SelectItem } from "@nextui-org/react";
 import { useAppSelector, useAppDispatch } from '../redux/hooks';
 import { useSensorSerial } from '../hooks/useSensor';
-import {
-  toggleSensor,
-  setAccelerationRange,
-  setSampleRate,
-  SensorState
-} from '../features/sensorSlice';
-import { RootState } from '../redux/rootReducer';
 import { setFilterFrequency } from '../features/dataSlice';
 
 interface SensorSettingsProps {
@@ -17,20 +10,15 @@ interface SensorSettingsProps {
 
 const SensorSettings: React.FC<SensorSettingsProps> = ({ accelNumber }) => {
   const dispatch = useAppDispatch();
-  const sensorState = useAppSelector((state: RootState) => 
-    state.sensor ? state.sensor[accelNumber] : undefined
-  );
 
-  useEffect(() => {
-    // This effect will run whenever sensorState changes
-    // You can add any necessary logic here
-  }, [sensorState]);
-
-  // check if serial port is connected:
-  const isSerialConnected = useAppSelector((state: RootState) => state.serial.isConnected);
-
-  // Use the custom hook for accel state change
-  useSensorSerial(accelNumber);
+  // Use the custom hook for sensor management
+  const {
+    sensorState,
+    isSerialConnected,
+    handleToggleSensor,
+    handleAccelerationRangeChange,
+    handleSampleRateChange
+  } = useSensorSerial(accelNumber);
 
   // Acceleration range in g: 2,4,8,16
   const accelRanges = [
@@ -60,16 +48,8 @@ const SensorSettings: React.FC<SensorSettingsProps> = ({ accelNumber }) => {
 
   const { isEnabled, accelerationRange, sampleRate } = sensorState;
 
-  const handleToggle = () => {
-    dispatch(toggleSensor(accelNumber));
-  };
-
-  const handleAccelerationRangeChange = (value: string) => {
-    dispatch(setAccelerationRange({ accelNumber, range: value }));
-  };
-
-  const handleSampleRateChange = (value: string) => {
-    dispatch(setSampleRate({ accelNumber, rate: value }));
+  const handleSampleRateChangeWrapper = (value: string) => {
+    handleSampleRateChange(value);
     dispatch(setFilterFrequency([accelNumber , Number(value)])) //send the sampling rate to dataslice to calculate the filter
   };
 
@@ -79,9 +59,9 @@ const SensorSettings: React.FC<SensorSettingsProps> = ({ accelNumber }) => {
     <div>
       <h3 className="text-lg font-semibold mb-2">Sensor {accelNumber} (Accel {accelNumber + 1})</h3>
       <div className="mb-4 flex items-center">
-        <Switch 
+        <Switch
           isSelected={isEnabled}
-          onChange={handleToggle}
+          onChange={handleToggleSensor}
           isDisabled = {!isSerialConnected}
         />
         <span className="ml-2">
@@ -113,7 +93,7 @@ const SensorSettings: React.FC<SensorSettingsProps> = ({ accelNumber }) => {
           label="Sample Rate"
           placeholder="Select a sample rate"
           selectedKeys={sampleRate ? [sampleRate] : []}
-          onSelectionChange={(keys) => handleSampleRateChange(Array.from(keys)[0] as string)}
+          onSelectionChange={(keys) => handleSampleRateChangeWrapper(Array.from(keys)[0] as string)}
         >
           {sampleRates.map((rate) => (
             <SelectItem key={rate.value} value={rate.value}>

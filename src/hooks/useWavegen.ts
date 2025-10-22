@@ -12,46 +12,53 @@ export const useWavegen = () => {
 
   const toggleWavegen = () => {
     dispatch(wavegenSlice.actions.toggleWavegen());
+    // Send the enable/disable command immediately after toggling
+    if (isSerialConnected) {
+      const newEnabledState = !wavegenState.isEnabled;
+      const command = newEnabledState ? 'wavegen start' : 'wavegen stop';
+      dispatch(sendSerialData(command));
+    }
   };
   const setWaveform = (waveform: string) => {
     dispatch(wavegenSlice.actions.setWaveform({ waveform }));
+    // Send the waveform command immediately if enabled and connected
+    if (isSerialConnected && wavegenState.isEnabled) {
+      dispatch(sendSerialData(`wavegen set waveform ${waveform}`));
+    }
   };
 
   const setFrequency = (frequency: number) => {
     dispatch(wavegenSlice.actions.setFrequency({ frequency }));
+    // Send the frequency command immediately if enabled and connected
+    if (isSerialConnected && wavegenState.isEnabled) {
+      dispatch(sendSerialData(`wavegen set frequency ${frequency}`));
+    }
   };
 
   const setAmplitude = (amplitude: number) => {
     dispatch(wavegenSlice.actions.setAmplitude({ amplitude }));
+    // Send the amplitude command immediately if enabled and connected
+    if (isSerialConnected && wavegenState.isEnabled) {
+      dispatch(sendSerialData(`wavegen set amplitude ${amplitude}`));
+    }
   };
 
-  useEffect(() => {
+  // Manual send function for when accordion items are clicked
+  const sendWavegenSettings = () => {
     if (isSerialConnected) {
       if (wavegenState.isEnabled) {
         dispatch(sendSerialData('wavegen start'));
       } else {
         dispatch(sendSerialData('wavegen stop'));
       }
-    }
-  }, [wavegenState.isEnabled, isSerialConnected]);
 
-  useEffect(() => {
-    if (isSerialConnected && wavegenState.isEnabled) {
-      dispatch(sendSerialData(`wavegen set waveform ${wavegenState.waveform}`));
+      if (wavegenState.isEnabled) {
+        dispatch(sendSerialData(`wavegen set waveform ${wavegenState.waveform}`));
+        dispatch(sendSerialData(`wavegen set frequency ${wavegenState.frequency}`));
+        dispatch(sendSerialData(`wavegen set amplitude ${wavegenState.amplitude}`));
+      }
     }
-  }, [wavegenState.waveform, wavegenState.isEnabled, isSerialConnected]);
-
-  useEffect(() => {
-    if (isSerialConnected && wavegenState.isEnabled) {
-      dispatch(sendSerialData(`wavegen set frequency ${wavegenState.frequency}`));
-    }
-  }, [wavegenState.frequency, wavegenState.isEnabled, isSerialConnected]);
-
-  useEffect(() => {
-    if (isSerialConnected && wavegenState.isEnabled) {
-      dispatch(sendSerialData(`wavegen set amplitude ${wavegenState.amplitude}`));
-    }
-  }, [wavegenState.amplitude, wavegenState.isEnabled, isSerialConnected]);
+  };
 
   return {
     ...wavegenState,
@@ -60,5 +67,6 @@ export const useWavegen = () => {
     setWaveform,
     setFrequency,
     setAmplitude,
+    sendWavegenSettings,
   };
 };

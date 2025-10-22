@@ -15,8 +15,12 @@ import Wavegen from './WavegenComponent';
 import StrobeComponent from './StrobeComponent';
 import Sensors from "./SensorsComponent";
 import FFTSettingsComponent from './FFTSettingsComponent';
+import { useAutoSettings } from '../hooks/useAutoSettings';
 
 const Layout: React.FC = () => {
+    // Auto-send all settings when serial connection is established
+    useAutoSettings();
+
     // Fix 1: Use string arrays instead of Set for NextUI Accordion
     const [selectedKeys, setSelectedKeys] = React.useState<string[]>(["titleButton"]);
     const [selectedKeys2, setSelectedKeys2] = React.useState<string[]>(["connect"]);

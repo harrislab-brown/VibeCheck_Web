@@ -47,7 +47,7 @@ function applyWindow(data: number[], windowFunction: WindowFunction): number[] {
 }
 
 // Convert complex FFT result to magnitude and phase
-function processFFTResult(fftResult: any[], sampleRate: number): FFTResult {
+function processFFTResult(fftResult: number[][], sampleRate: number): FFTResult {
   const N = fftResult.length;
   const nyquistIndex = Math.floor(N / 2);
   const frequencies = new Array(nyquistIndex);
