@@ -23,11 +23,11 @@ const PlotControlsComponent: React.FC = () => {
   
         <div className='plotControlsParent'>
       <div className='container1'>
-        <Input 
-          label = "Window Width (0-200)"
-          type="number" 
-          value={plotSettings.windowWidth.toString()} 
-          onChange={(e) => handleChange('windowWidth', Number(e.target.value))} 
+        <Input
+          label = "Time Window (ms)"
+          type="number"
+          value={plotSettings.timeWindowMs.toString()}
+          onChange={(e) => handleChange('timeWindowMs', Number(e.target.value))}
         />
       </div>
       <div className='container2'>

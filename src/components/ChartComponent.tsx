@@ -18,7 +18,6 @@ import { useAppSelector } from '../redux/hooks';
 
 import '../styles/Chart.css'
 import { RootState } from '../redux/store';
-import { time } from 'console';
 
 ChartJS.register(
   CategoryScale,
@@ -31,15 +30,16 @@ ChartJS.register(
 );
 
 interface ChartComponentProps {
-  sensorNumber: number;
-  channelNumber: number;
+  sensorNumbers?: number[];  // For multi-sensor mode
+  sensorNumber?: number;     // For single sensor mode (keep for backward compatibility)
+  channelNumber?: number;    // For single sensor mode
   title: string;
   updateInterval: number;
 }
 
 const ChartComponent: React.FC<ChartComponentProps> = ({
+  sensorNumbers,
   sensorNumber,
-  channelNumber,
   title,
   updateInterval
 
@@ -49,67 +49,126 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
     labels: [],
     datasets: []
   });
+  const [xAxisLimits, setXAxisLimits] = useState<{min: number, max: number} | null>(null);
   const isPaused = useAppSelector(state => state.plot.isPaused);
-  const data = useAppSelector((state: RootState) => state.data.data.find((d) => d.channel === channelNumber));
-  const frequencies = useAppSelector(state => state.data.frequency);
-  const frequency = frequencies[sensorNumber]
-  var timeLabel = (1/frequency).toString()
-  timeLabel = timeLabel.slice(0,7)
-  timeLabel = timeLabel.concat(" s")
-  
+  const allData = useAppSelector((state: RootState) => state.data.data);
+
+  // Determine which sensors to plot
+  const sensorsToPlot = sensorNumbers || (sensorNumber !== undefined ? [sensorNumber] : []);
+
   const plotSettings = useAppSelector(state => state.plot);
-  const enabledSensorsCount = useAppSelector(state=> Object.values(state.sensor).filter(s=>s.isEnabled).length);
   const chartRef = useRef<ChartJS<"line"> | null>(null);
-  const lineTension = 0.2;
+  const lineTension = 0.0;
 
 
 
+
+  // Color scheme by axis (consistent across all sensors)
+  const axisColors = {
+    x: 'rgb(255, 99, 132)',  // Red for X-axis
+    y: 'rgb(75, 192, 75)',   // Green for Y-axis
+    z: 'rgb(54, 162, 235)'   // Blue for Z-axis
+  };
+
+  // Point styles for different sensors
+  const sensorPointStyles = [
+    'circle',    // Sensor 0
+    'rect',     // Sensor 1
+    'triangle'   // Sensor 2
+  ];
 
   useEffect(() => {
     const updateChart = () => {
       if(isPaused) return;
 
+      const datasets: any[] = [];
 
+      sensorsToPlot.forEach((sensor) => {
+        const channelNum = sensor * 2; // Convert sensor number to channel number
+        const sensorData = allData.find((d) => d.channel === channelNum);
 
+        if (sensorData && sensorData.dataPoints.length > 0) {
+          const latestTimestamp = Math.max(...sensorData.dataPoints.map(p => p.timestamp));
+          const timeThreshold = latestTimestamp - (plotSettings.timeWindowMs * 1000); // Convert ms to microseconds
+          const recentData = sensorData.dataPoints.filter(point =>
+            point.timestamp >= timeThreshold
+          );
+          const pointStyle = sensorPointStyles[sensor] || sensorPointStyles[0];
 
-      //  const data = allData.find((d) => d.channel === channel);//this is picking out each datapoitn when I think its actually sorted?
-      if (data) {
-        const newChartData: ChartData<'line'> = {
-          labels: data.dataPoints.slice(-plotSettings.windowWidth).map((_, index) => index.toString()),
-          datasets: [
+          // Add X, Y, Z datasets for this sensor
+          datasets.push(
             {
-              label: 'X Axis',
-              data: data.dataPoints.slice(-plotSettings.windowWidth).map((point) => point.x),
-              borderColor: 'rgb(255, 99, 132)',
-              backgroundColor: 'rgba(255, 99, 132, 0.5)',
+              label: `Sensor ${sensor} X`,
+              data: recentData.map((point) => ({
+                x: point.timestamp / 1000, // Convert microseconds to milliseconds
+                y: point.x
+              })),
+              borderColor: axisColors.x,
+              backgroundColor: axisColors.x.replace('rgb', 'rgba').replace(')', ', 0.5)'),
+              pointStyle: pointStyle,
+              borderWidth: 2, // Thinner line
+              pointRadius: 4, // Bigger points
               tension: lineTension,
             },
             {
-              label: 'Y Axis',
-              data: data.dataPoints.slice(-plotSettings.windowWidth).map((point) => point.y),
-              borderColor: 'rgb(75, 192, 192)',
-              backgroundColor: 'rgba(75, 192, 192, 0.5)',
+              label: `Sensor ${sensor} Y`,
+              data: recentData.map((point) => ({
+                x: point.timestamp / 1000, // Convert microseconds to milliseconds
+                y: point.y
+              })),
+              borderColor: axisColors.y,
+              backgroundColor: axisColors.y.replace('rgb', 'rgba').replace(')', ', 0.5)'),
+              pointStyle: pointStyle,
+              borderWidth: 2, // Thinner line
+              pointRadius: 4, // Bigger points
               tension: lineTension,
             },
             {
-              label: 'Z Axis',
-              data: data.dataPoints.slice(-plotSettings.windowWidth).map((point) => point.z),
-              borderColor: 'rgb(53, 162, 235)',
-              backgroundColor: 'rgba(53, 162, 235, 0.5)',
+              label: `Sensor ${sensor} Z`,
+              data: recentData.map((point) => ({
+                x: point.timestamp / 1000, // Convert microseconds to milliseconds
+                y: point.z
+              })),
+              borderColor: axisColors.z,
+              backgroundColor: axisColors.z.replace('rgb', 'rgba').replace(')', ', 0.5)'),
+              pointStyle: pointStyle,
+              borderWidth: 2, // Thinner line
+              pointRadius: 4, // Bigger points
               tension: lineTension,
-            },
-          ],
-        };
-        setChartData(newChartData);
+            }
+          );
+        }
+      });
+
+      // Calculate x-axis limits based on time window
+      let latestTimestamp = 0;
+      sensorsToPlot.forEach((sensor) => {
+        const channelNum = sensor * 2;
+        const sensorData = allData.find((d) => d.channel === channelNum);
+        if (sensorData && sensorData.dataPoints.length > 0) {
+          const sensorLatest = Math.max(...sensorData.dataPoints.map(p => p.timestamp));
+          latestTimestamp = Math.max(latestTimestamp, sensorLatest);
+        }
+      });
+
+      if (latestTimestamp > 0) {
+        const timeWindowMicroseconds = plotSettings.timeWindowMs * 1000;
+        setXAxisLimits({
+          min: (latestTimestamp - timeWindowMicroseconds) / 1000, // Convert to milliseconds
+          max: latestTimestamp / 1000 // Convert to milliseconds
+        });
       }
+
+      const newChartData: ChartData<'line'> = { datasets };
+      setChartData(newChartData);
     };
 
     const intervalId = setInterval(updateChart, updateInterval);
 
     return () => clearInterval(intervalId);
-  }, [channelNumber, plotSettings.windowWidth, data, updateInterval]);
+  }, [sensorsToPlot, plotSettings.timeWindowMs, allData, updateInterval, isPaused]);
 
-  const options: ChartOptions<'line'> = {
+  const options: ChartOptions<'line'> = useMemo(() => ({
     
     responsive: true,
     maintainAspectRatio: false,
@@ -121,20 +180,21 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
         min: plotSettings.autoRange ? undefined : plotSettings.yMin,
         max: plotSettings.autoRange ? undefined : plotSettings.yMax,
         title: {
-          text: "g",
+          text: "Acceleration (g)",
           display: true,
           color: "white",
           font: {
-            size:20
+            size: 20
           }
         }
       },
       x: {
-        min:0,
-        max:6600,
+        type: 'linear',
+        min: xAxisLimits?.min,
+        max: xAxisLimits?.max,
         title:{
-          text: timeLabel ,
-          display:true, 
+          text: "Time (ms)",
+          display:true,
           color: "white",
           font: {
             size:20
@@ -151,11 +211,17 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
         display: true,
         text: title,
       },
-    
+      legend: {
+        display: true,
+        labels: {
+          usePointStyle: true, // Use point styles in legend instead of rectangles
+        }
+      },
+
     },
-    
+
     animation: false,
-  };
+  }), [plotSettings.autoRange, plotSettings.yMin, plotSettings.yMax, xAxisLimits, title]);
   useEffect(() => {
     const chart = chartRef.current;
     if (chart) {
@@ -171,7 +237,7 @@ const ChartComponent: React.FC<ChartComponentProps> = ({
 
  
   return (
-    <div className="chart-div" style={{ height: `${100 / enabledSensorsCount}%` }}>
+    <div className="chart-div" style={{ height: '100%' }}>
       { <Line ref={chartRef} data={chartData} options={options} /> }
       {/* console.log(chartData) */}
     </div>

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface PlotSettings {
-  windowWidth: number;
+  timeWindowMs: number; // Time window in milliseconds for data display
   autoRange: boolean;
   yMin: number;
   yMax: number;
@@ -13,7 +13,7 @@ interface PlotSettings {
 }
 
 const initialState: PlotSettings = {
-  windowWidth: 100,
+  timeWindowMs: 2000, // Default 2 seconds
   autoRange: false,
   yMin: -4,
   yMax: 4,

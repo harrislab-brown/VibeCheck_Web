@@ -24,15 +24,11 @@ const ChartContainer: React.FC = () => {
   else{
       return (
         <div className="chart-container">
-          {enabledSensors.map((channel) => (
-            <ChartComponent 
-              key={channel}
-              sensorNumber={channel} 
-              channelNumber={channel*2} 
-              title={`Sensor ${channel}`} 
-              updateInterval={1}
-            />
-          ))}
+          <ChartComponent
+            sensorNumbers={enabledSensors}
+            title={`All Sensors (${enabledSensors.join(', ')})`}
+            updateInterval={1}
+          />
         </div>
       );
     };

@@ -20,10 +20,10 @@ const FileContainer: React.FC = () => {
       const directory = await window.showDirectoryPicker();
       dispatch(setSaveLocation(directory.name));
       fileStreamService.setOutputDirectory(directory);
-      setStatusMessage('Save folder selected');
+      dispatch(setStatusMessage('Save folder selected'));
     } catch (error) {
       console.error('Error selecting directory:', error);
-      setStatusMessage('Failed to select file save location')
+      dispatch(setStatusMessage('Failed to select file save location'));
     }
   };
 
@@ -35,28 +35,37 @@ const FileContainer: React.FC = () => {
       await fileStreamService.stopRecording();
       dispatch(setRecording(false));
     } else {
-      console.log('Start Recording')
-      const now = new Date().toLocaleString('en-US', {
-        timeZone: 'America/New_York',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-      });
+      try {
+        // If no save location is set, prompt for directory first
+        if (!saveLocation) {
+          const directory = await window.showDirectoryPicker();
+          dispatch(setSaveLocation(directory.name));
+          fileStreamService.setOutputDirectory(directory);
+        }
 
-      const [date, time] = now.split(', ');
-      const [month, day, year] = date.split('/');
-      const timestamp = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}_${time.replace(/:/g, '-')}`;
-      dispatch(setStatusMessage(`Recording Started at ${timestamp}`));
-      const filename = `data_${timestamp}.csv`;
-      await fileStreamService.startRecording(filename); 
-      // follow this to get the data out of redux store
-      //Conclusion: this changes isRecording to true inside of a filestreamservice instance
-      // which triggers serial data middleware to start writing
-      dispatch(setRecording(true)); // here is where the data is accesed, 
+        console.log('Start Recording')
+        const now = new Date().toLocaleString('en-US', {
+          timeZone: 'America/New_York',
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false
+        });
+
+        const [date, time] = now.split(', ');
+        const [month, day, year] = date.split('/');
+        const timestamp = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}_${time.replace(/:/g, '-')}`;
+        dispatch(setStatusMessage(`Recording Started at ${timestamp}`));
+        const filename = `data_${timestamp}.csv`;
+        await fileStreamService.startRecording(filename);
+        dispatch(setRecording(true));
+      } catch (error) {
+        console.error('Error starting recording:', error);
+        dispatch(setStatusMessage('Failed to start recording'));
+      }
     }
   };
 
@@ -74,7 +83,6 @@ const FileContainer: React.FC = () => {
           </Button>
           <Button
             onClick={handleToggleRecording}
-            disabled={!saveLocation}
             color={isRecording ? "danger" : "primary"}
             >
             {isRecording ? 'Stop Recording' : 'Start Recording'}

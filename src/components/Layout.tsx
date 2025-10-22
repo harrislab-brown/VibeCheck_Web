@@ -14,8 +14,6 @@ import SerialInput from './SerialInput';
 import Wavegen from './WavegenComponent';
 import StrobeComponent from './StrobeComponent';
 import Sensors from "./SensorsComponent";
-import FilterComponent from './FilterComponent';
-import DecimationComponent from './DecimationComponent';
 
 const Layout: React.FC = () => {
     // Fix 1: Use string arrays instead of Set for NextUI Accordion
@@ -34,7 +32,7 @@ const Layout: React.FC = () => {
     const handleSelectionChange2 = (keys: "all" | Set<React.Key>) => {
         if (keys === "all") {
             // Handle "all" case if needed
-            setSelectedKeys2(["connect", "save", "plot", "status", "sensors", "wavegen", "strobe", "serial", "filter", "decimation"]);
+            setSelectedKeys2(["connect", "save", "plot", "status", "sensors", "wavegen", "strobe", "serial"]);
         } else {
             setSelectedKeys2(Array.from(keys) as string[]);
         }
@@ -102,12 +100,7 @@ const Layout: React.FC = () => {
                                         <AccordionItem key="serial" aria-label="Serial" title="Serial Input">
                                             <SerialInput />
                                         </AccordionItem>
-                                        <AccordionItem key="filter" aria-label="Filter" title="Digital Filters">
-                                            <FilterComponent/>
-                                        </AccordionItem>  
-                                        <AccordionItem key="decimation" aria-label="Decimation" title="Decimation">
-                                            <DecimationComponent/>
-                                        </AccordionItem>  
+  
                                     </Accordion>
                                 </Card>
                             </div> 
