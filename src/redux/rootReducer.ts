@@ -9,6 +9,7 @@ import plotReducer from '../features/plotSlice'
 import dataReducer, { DataState } from '../features/dataSlice'
 import wavegenReducer, { WavegenState } from '../features/wavegenSlice'
 import strobeReducer, { StrobeState } from '../features/strobeSlice'
+import fftReducer from '../features/fftSlice'
 
 
 
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
   data: dataReducer,
   wavegen: wavegenReducer,
   strobe: strobeReducer,
+  fft: fftReducer,
 });
 
 export interface RootState {
@@ -33,6 +35,7 @@ export interface RootState {
   data: DataState;
   wavegen: WavegenState;
   strobe: StrobeState;
+  fft: ReturnType<typeof fftReducer>;
 }
 
 export default rootReducer;

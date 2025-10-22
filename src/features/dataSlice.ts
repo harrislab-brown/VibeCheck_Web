@@ -80,7 +80,7 @@ export interface DataState {
 
 const initialState: DataState = {
   data: [],
-  dataRetentionLimit: 1000, // doesnt need to be this high, but it does mean you could have 1000 
+  dataRetentionLimit: 5000, // Increased for higher sample rates and FFT requirements 
   // datapoints on the screen at the same time
   error: null,
   Filtering: false,

@@ -14,11 +14,12 @@ import SerialInput from './SerialInput';
 import Wavegen from './WavegenComponent';
 import StrobeComponent from './StrobeComponent';
 import Sensors from "./SensorsComponent";
+import FFTSettingsComponent from './FFTSettingsComponent';
 
 const Layout: React.FC = () => {
     // Fix 1: Use string arrays instead of Set for NextUI Accordion
     const [selectedKeys, setSelectedKeys] = React.useState<string[]>(["titleButton"]);
-    const [selectedKeys2, setSelectedKeys2] = React.useState<string[]>([]);
+    const [selectedKeys2, setSelectedKeys2] = React.useState<string[]>(["connect"]);
 
     // Fix 2: Proper event handlers for NextUI Accordion
     const handleSelectionChange = (keys: "all" | Set<React.Key>) => {
@@ -32,7 +33,7 @@ const Layout: React.FC = () => {
     const handleSelectionChange2 = (keys: "all" | Set<React.Key>) => {
         if (keys === "all") {
             // Handle "all" case if needed
-            setSelectedKeys2(["connect", "save", "plot", "status", "sensors", "wavegen", "strobe", "serial"]);
+            setSelectedKeys2(["connect", "save", "plot", "status", "sensors", "wavegen", "strobe", "serial", "fft"]);
         } else {
             setSelectedKeys2(Array.from(keys) as string[]);
         }
@@ -99,6 +100,9 @@ const Layout: React.FC = () => {
                                         </AccordionItem>
                                         <AccordionItem key="serial" aria-label="Serial" title="Serial Input">
                                             <SerialInput />
+                                        </AccordionItem>
+                                        <AccordionItem key="fft" aria-label="FFT" title="(Experimental) FFT Analysis">
+                                            <FFTSettingsComponent />
                                         </AccordionItem>
   
                                     </Accordion>

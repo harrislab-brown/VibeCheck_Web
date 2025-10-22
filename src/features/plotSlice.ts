@@ -13,7 +13,7 @@ interface PlotSettings {
 }
 
 const initialState: PlotSettings = {
-  timeWindowMs: 2000, // Default 2 seconds
+  timeWindowMs: 500, // Default 0.5 seconds
   autoRange: false,
   yMin: -4,
   yMax: 4,
